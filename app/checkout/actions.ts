@@ -1,5 +1,6 @@
 "use server";
 
+import { requireUser } from "@/lib/auth/users";
 import { db } from "@/lib/db";
 import { orders } from "@/lib/db/schema";
 import type { CartLine } from "@/lib/cart";
@@ -15,6 +16,8 @@ type Result =
  * prices the order from lib/content.ts — the browser only sends what was picked (slug, pack, qty).
  */
 export async function placeOrder(form: CheckoutForm, lines: CartLine[]): Promise<Result> {
+  const user = await requireUser("/checkout"); // not logged in → off to /login (cart stays in the browser)
+
   const errors = validateCheckout(form);
   if (Object.keys(errors).length) return { ok: false, error: "Please fix the highlighted fields.", errors };
 
@@ -52,9 +55,10 @@ export async function placeOrder(form: CheckoutForm, lines: CartLine[]): Promise
   try {
     await db.insert(orders).values({
       id: order.id,
+      userId: user.id,
       name: order.name,
       phone: order.phone,
-      email: form.email.trim() || null,
+      email: form.email.trim() || user.email, // empty at checkout → their login email
       address: order.address,
       items,
       subtotal,

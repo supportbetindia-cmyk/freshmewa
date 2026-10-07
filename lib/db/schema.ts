@@ -1,9 +1,11 @@
-import { integer, jsonb, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { index, integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { orderStatuses, type Address, type OrderItem } from "../orders";
+
 
 /** Same shape as `Order` in lib/orders.ts, so the admin and the account page agree. Amounts in whole rupees. */
 export const orders = pgTable("orders", {
   id: text().primaryKey(), // "FM-…" from newOrderId()
+  userId: uuid("user_id"), // neon_auth.user.id of the customer; null = placed before login was required
   status: text({ enum: orderStatuses }).notNull().default("placed"),
   name: text().notNull(),
   phone: text().notNull(),
@@ -16,7 +18,9 @@ export const orders = pgTable("orders", {
   total: integer().notNull(),
   payment: text({ enum: ["cod"] }).notNull().default("cod"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-});
+}, (t) => [
+  index("orders_user_id_idx").on(t.userId), // "My Orders" looks up orders by customer — this makes it instant
+]);
 
 
 

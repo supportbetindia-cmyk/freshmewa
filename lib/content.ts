@@ -8,6 +8,8 @@ export const navLinks = [
   { label: "FAQs", href: "/#faq" },
 ]
 
+/** "7 October 2026" — blog dates. */
+export const formatDate = (d: Date) => d.toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "long" });
 export type Flavour = {
   slug: string;
   name: string;

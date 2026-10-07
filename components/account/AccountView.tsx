@@ -7,6 +7,8 @@ import { Award, ChevronRight, ClipboardList, ListOrdered, LogOut, MapPin, Plus, 
 import { account, formatAddress, useAccount } from "@/lib/account";
 import AddressDialog from "./AddressDialog";
 import { formatINR } from "@/lib/content";
+import type { MyOrder } from "@/lib/db/orders";
+import { logOut } from "@/app/account/actions";
 
 const tabs = [
   { id: "orders", title: "My Orders", sub: "View History", Icon: ListOrdered },
@@ -15,10 +17,10 @@ const tabs = [
 ] as const;
 type Tab = (typeof tabs)[number]["id"];
 
-const date = (iso: string) => new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+const date = (d: Date | string) => new Date(d).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric" });
 
-export default function AccountView() {
-  const { profile, orders, addresses, ready } = useAccount();
+export default function AccountView({ user, orders }: { user: { name: string; email: string }; orders: MyOrder[] }) {
+  const { profile, addresses, ready } = useAccount();
   const [tab, setTab] = useState<Tab>("orders");
   const dialog = useRef<HTMLDialogElement>(null);
   const lenis = useLenis();
@@ -36,12 +38,10 @@ export default function AccountView() {
       <div className="border-b border-forest/10">
         <div className="mx-auto flex max-w-6xl flex-wrap items-end justify-between gap-3 px-5 pb-8 sm:px-8">
           <h1 className="poster-h2 text-forest">My Account</h1>
-          {profile && (
-            <div className="text-right">
-              <p className="font-poster text-3xl leading-none text-forest">+91 {profile.phone}</p>
-              <p className="mt-1 text-sm text-ink-muted">{profile.name}</p>
-            </div>
-          )}
+          <div className="text-right">
+            <p className="font-poster text-3xl leading-none text-forest">{user.name || profile?.name || "Hello!"}</p>
+            <p className="mt-1 text-sm text-ink-muted">{user.email}</p>
+          </div>
         </div>
       </div>
 
@@ -72,17 +72,12 @@ export default function AccountView() {
                 );
               })}
             </nav>
-            {profile && (
-              <button
-                type="button"
-                onClick={() => {
-                  if (confirm("Log out? This removes your saved details and order history from this device.")) account.logout();
-                }}
-                className="btn btn-outline w-full gap-2 bg-white text-forest"
-              >
+            {/* Server ends the session; onSubmit first clears this device's saved addresses */}
+            <form action={logOut} onSubmit={() => account.logout()}>
+              <button type="submit" className="btn btn-outline w-full gap-2 bg-white text-forest">
                 <LogOut className="size-4" /> Log out
               </button>
-            )}
+            </form>
           </div>
 
           {/* Panel */}
@@ -98,7 +93,7 @@ export default function AccountView() {
                       <li key={o.id} className="rounded-2xl border border-forest/10 bg-cream p-4 sm:p-5">
                         <div className="flex flex-wrap items-center justify-between gap-2">
                           <p className="font-semibold text-forest">
-                            {o.id} <span className="font-normal text-ink-muted">· {date(o.placedAt)}</span>
+                            {o.id} <span className="font-normal text-ink-muted">· {date(o.createdAt)}</span>
                           </p>
                           <span className="rounded-full bg-mint-soft px-3 py-1 text-xs font-bold uppercase tracking-wider text-mint">
                             {o.status}

@@ -26,9 +26,12 @@ node lib/account.test.ts   # checkout validation / order helpers check
 | `/shop/[slug]` | Product page for `pudina`, `salt-pepper`, `peri-peri` (pre-rendered; any other slug → 404) |
 | `/our-story` | Brand story, told in 10 chapter cards + FAQ + final CTA |
 | `/shipping-returns` | Shipping and returns draft, linked from the footer and product buy boxes; excluded from indexing until policy details are confirmed |
-| `/checkout` | Contact → delivery address → payment (Cash on Delivery) with a sticky order summary |
+| `/login` | Customer login: **Continue with Google** or email → 6-digit code. `?next=/checkout` returns there after login |
+| `/checkout` | **Login required.** Contact → delivery address → payment (Cash on Delivery) with a sticky order summary |
 | `/checkout/success?order=…` | Order confirmation |
-| `/account` | My Account: My Orders, My Addresses (add / set default / remove), My Loyalty Points (coming soon), Log out |
+| `/account` | **Login required.** My Account: My Orders (from the database, any device), My Addresses (this device), My Loyalty Points (coming soon), Log out |
+| `/blog` | Published blog posts, newest first (not linked from the navbar yet) |
+| `/blog/[slug]` | One post: "On this page" contents (left), post, "Our flavours" shop card (right) |
 
 Navbar and Footer are rendered once in `app/layout.tsx` — pages must not render their own.
 
@@ -84,7 +87,10 @@ Every page is a folder in `app/` (folder path = URL). Code that only runs on the
 | `checkout/page.tsx` | `/checkout` | Checkout page |
 | `checkout/actions.ts` | — | **`placeOrder` server action**: validates, prices and saves the order to the database |
 | `checkout/success/` | `/checkout/success` | Order confirmation |
-| `account/` | `/account` | My Account (orders + saved addresses on this device) |
+| `login/` | `/login` | Customer login page, `LoginForm` and `emailLogin` action (send code / check code) |
+| `account/` | `/account` | My Account (the customer's own orders from the DB; addresses still on this device) + `logOut` action |
+| `blog/page.tsx` | `/blog` | Blog list (static; rebuilt when a post changes) |
+| `blog/[slug]/page.tsx` | `/blog/why-makhana` … | One post + table of contents + flavours sidebar, `BlogPosting` JSON-LD |
 | `api/auth/[...path]/route.ts` | `/api/auth/*` | Forwards login/session requests to Neon Auth |
 | `admin/page.tsx` | `/admin` | Redirects to `/admin/orders` |
 | `admin/login/` | `/admin/login` | Admin sign-in form + its server action |
@@ -94,6 +100,10 @@ Every page is a folder in `app/` (folder path = URL). Code that only runs on the
 | `admin/(panel)/orders/page.tsx` | `/admin/orders` | Orders list + status filter tabs |
 | `admin/(panel)/orders/[id]/page.tsx` | `/admin/orders/FM-…` | One order: items, totals, customer, address, status dropdown |
 | `admin/(panel)/orders/actions.ts` | — | `updateStatus` server action |
+| `admin/(panel)/blog/page.tsx` | `/admin/blog` | All posts (Draft / Published) |
+| `admin/(panel)/blog/new/`, `[id]/` | `/admin/blog/new`, `/admin/blog/3` | Write / edit a post |
+| `admin/(panel)/blog/PostForm.tsx`, `RichEditor.tsx` | — | Post form + WordPress-style editor (Tiptap) |
+| `admin/(panel)/blog/actions.ts` | — | `savePost` (save / publish / unpublish, cleans HTML) and `removePost` |
 
 ### `components/` — UI pieces used by the pages
 
@@ -125,12 +135,16 @@ Every page is a folder in `app/` (folder path = URL). Code that only runs on the
 | `cart.ts` | browser | Cart store (localStorage) |
 | `account.ts` | browser | My Account store (profile, addresses, orders on this device) |
 | `motion.ts` | browser | Shared animation easing/variants/parallax hooks |
-| `*.test.ts` | — | Runnable checks: `node lib/cart.test.ts`, `node lib/account.test.ts` |
+| `safe-next.ts` | both | Only allows `?next=` to our own pages (blocks open redirects) |
+| `*.test.ts` | — | Runnable checks: `node lib/cart.test.ts`, `node lib/account.test.ts`, `node lib/safe-next.test.ts` |
 | `db/schema.ts` | server | Database tables (Drizzle). Change → `npx drizzle-kit push` |
 | `db/index.ts` | server | The `db` client (Neon over HTTP) |
-| `db/orders.ts` | server | Admin order queries (`listOrders`, `getOrder`, `setOrderStatus`) — each checks admin itself |
+| `db/orders.ts` | server | Admin order queries (`listOrders`, `getOrder`, `setOrderStatus`) — each checks admin itself. `listMyOrders()` = the logged-in customer's orders (takes no user id on purpose) |
+| `db/posts.ts` | server | Blog queries: public ones return published posts only; admin ones check admin |
 | `auth/server.ts` | server | Neon Auth instance (`auth.getSession`, `auth.signIn`, …) |
 | `auth/admin.ts` | server | `requireAdmin()` — call at the top of every admin page/action |
+| `auth/users.ts` | server | `requireUser(next)` — any logged-in customer, else `/login?next=…`. One session lookup per request (`cache`) |
+| `auth/client.ts` | browser | Browser auth client (Google sign-in) |
 
 ### Assets and tools
 
@@ -191,18 +205,29 @@ Flow: product/shop card → **Add to Cart / Buy Now** → cart drawer → **Chec
 
 - [x] Save orders server-side and **recalculate prices on the server** (`placeOrder`)
 - [x] Admin page to see orders and update their status (`/admin`)
-- [ ] Real login (phone OTP) so "My Account" works across devices; today "Log out" just clears this device
+- [x] Customer login (Google + email code) — orders are linked to the customer and My Orders works on any device
+- [ ] Before launch: own Google OAuth app (dev uses Neon's shared keys) and custom SMTP for login emails (dev sends from `auth@mail.myneon.app`)
+- [ ] Saved addresses still live only in the browser — move them to the database
+- [ ] Phone OTP: needs an SMS provider + DLT registration, and Neon Auth has no phone-first sign-up
 - [ ] Online payments (e.g. Razorpay) + order status updates
 - [ ] Set the delivery fee policy
 
 ## Database (Neon Postgres + Drizzle)
 
 - Neon project `freshmewa`, branch `production`; linked with `neon link` (`.neon/`, `neon.ts` has `auth: true`). `neon deploy` writes `DATABASE_URL`, `DATABASE_URL_UNPOOLED` and the `NEON_AUTH_*` vars into `.env.local` (git-ignored, never commit it).
-- Schema: `lib/db/schema.ts` → `orders` table (same shape as `Order` in `lib/account.ts`; amounts in whole ₹; `status` = placed / shipped / delivered / cancelled).
+- Schema: `lib/db/schema.ts` → `posts` table (blog; `publishedAt` null = draft, `slug` unique) and `orders` table (same shape as `Order` in `lib/orders.ts`; `user_id` = the customer's `neon_auth.user.id`, indexed; amounts in whole ₹; `status` = placed / shipped / delivered / cancelled).
 - Client: `import { db } from "@/lib/db"` — **server code only** (`server-only` guard).
 - Change the schema, then apply it: `npx drizzle-kit push` (uses the unpooled URL, see `drizzle.config.ts`).
 - **Placing an order** = server action `placeOrder` in `app/checkout/actions.ts`. The browser sends only the form + cart lines (slug, pack, qty); the server re-validates them, rejects unknown flavours/packs and quantities outside 1–`MAX_QTY`, prices everything from `lib/content.ts`, then inserts the row. The checkout form shows its error message under the button.
 - **Server vs browser code:** a `"use client"` file's exports are only placeholders on the server (a `MAX_QTY` imported from `lib/cart.ts` silently stopped working this way). Shared types, rules and constants go in `lib/orders.ts` (no `"use client"`); `lib/account.ts` / `lib/cart.ts` are browser stores.
+
+## Customer login
+
+- **How:** `/login` — Google (browser → `/api/auth` → Google → back) or email code (`emailLogin` in `app/login/actions.ts`: no code → send one; code → sign in, first login creates the account). Same Neon Auth user list as the admin; customers have role `user`.
+- **Protected:** `/checkout`, `/account` and the `placeOrder` action call `requireUser()` (`lib/auth/users.ts`). The action check is the real lock — tested: a logged-out `placeOrder` request gets a redirect and saves nothing.
+- **Orders ↔ customer:** `placeOrder` saves `user_id` from the session (never from the form). `listMyOrders()` reads it from the session too, so nobody can request another customer's orders.
+- **Remembering the login:** cookies set by Neon Auth — `session_token` (7 days, row in `neon_auth.session`) and `session_data` (signed with `NEON_AUTH_COOKIE_SECRET`, 5-minute shortcut so most requests skip the network). Both `HttpOnly; Secure; SameSite=Lax`. Log out deletes the session row and the cookies.
+- **After login:** `?next=` is checked by `safeNext` so it can only go to our own pages.
 
 ## Admin (`/admin`)
 
@@ -211,6 +236,15 @@ Flow: product/shop card → **Add to Cart / Buy Now** → cart drawer → **Chec
 - **Pages:** `/admin/orders` (newest first, filter by status) → `/admin/orders/[id]` (items, totals, customer, address, status dropdown). Admin pages hide the shop navbar/footer (`components/HideOnAdmin.tsx`).
 - **Security rule:** every order query lives in `lib/db/orders.ts` and calls `requireAdmin()` (`lib/auth/admin.ts`) itself — pages *and* server actions are protected even if called directly. Tested: a logged-out `updateStatus` request is redirected to the login and the order is unchanged.
 - Server-only files import `"server-only"` so the build fails if browser code ever imports them.
+
+## Blog
+
+- **Write:** `/admin/blog` → New post. Paste from Google Docs, Word or a website — headings, bold, lists, links and quotes are kept (Tiptap editor, `RichEditor.tsx`). Empty URL field = made from the title.
+- **Buttons:** Save draft / Publish / Unpublish (Publish also saves edits), Delete (asks first). Duplicate URLs are blocked by the database (`slug` unique) and shown as an error.
+- **Security:** post HTML is cleaned on the server with `sanitize-html` before saving (only headings, text formatting, lists, links, quotes, images; no scripts/styles/`javascript:` links), because the public page inserts it as HTML.
+- **Speed:** `/blog` and each `/blog/[slug]` are served as static HTML; saving, publishing or deleting a post rebuilds them (`revalidatePath("/blog", "layout")`).
+- **Styling:** `.blog-content` in `app/globals.css` styles the post in both the editor and the public page.
+- **Images:** add by URL with the toolbar's Image button (e.g. `/images/…`). Pasted Word/screenshot images are dropped; Google Docs image links expire. Uploads need file storage (not built yet).
 
 ## Cart
 

@@ -9,7 +9,11 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
     <div className="min-h-screen bg-cream-deep/50">
       <header className="border-b border-forest/10 bg-forest text-cream">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4">
-          <Link href="/admin/orders" className="font-poster text-2xl">Fresh Mewa Admin</Link>
+          <nav className="flex items-center gap-5">
+            <Link href="/admin/orders" className="font-poster text-2xl">Fresh Mewa Admin</Link>
+            <Link href="/admin/orders" className="text-sm text-cream/80 hover:text-cream">Orders</Link>
+            <Link href="/admin/blog" className="text-sm text-cream/80 hover:text-cream">Blog</Link>
+          </nav>
           <div className="flex items-center gap-4 text-sm">
             <span className="text-cream/70 max-sm:hidden">{admin.email}</span>
             <form action={signOut}>
