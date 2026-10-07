@@ -6,6 +6,7 @@ import SmoothScroll from "@/components/SmoothScroll";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/sections/Footer";
 import "./globals.css";
+import HideOnAdmin from "@/components/HideOnAdmin";
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
@@ -64,9 +65,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <LazyMotion features={domAnimation} strict>
           <MotionConfig reducedMotion="user">
             <SmoothScroll>
-              <Navbar />
+              <HideOnAdmin><Navbar /></HideOnAdmin>
               {children}
-              <Footer />
+              <HideOnAdmin><Footer /></HideOnAdmin>
             </SmoothScroll>
           </MotionConfig>
         </LazyMotion>

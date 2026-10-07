@@ -5,6 +5,9 @@ import type { CartLine } from "./cart";
 /** Most packs of one flavour + size per order. Lives here (not lib/cart.ts, a "use client" file) so the server sees the real number. */
 export const MAX_QTY = 20;
 
+export const orderStatuses = ["placed", "shipped", "delivered", "cancelled"] as const;
+export type OrderStatus = (typeof orderStatuses)[number];
+
 export type Address = {
   id: string;
   line: string; // full address (house / flat, street)

@@ -55,36 +55,96 @@ Deliberately more playful than the rest of the site, so a long read stays fun:
 
 ## Where things live
 
-```
-app/
-  layout.tsx            fonts, metadata, MotionConfig (reduced motion), SmoothScroll (Lenis)
-  globals.css           design tokens + shared utilities (poster-h2, btn, btn-primary, btn-outline)
-  page.tsx              homepage (section order)
-  shop/page.tsx         shop page
-  shop/[slug]/page.tsx  product page
-  fonts/                subset WOFF2 builds of Veneer + Veneer Extras
-components/
-  Navbar.tsx            sticky glass navbar, mobile menu drawer, cart badge
-  CartDrawer.tsx        slide-in cart (qty, remove, subtotal, savings)
-  CartButtons.tsx       Add to Cart ("Added ✓" feedback) + Buy Now (adds, opens cart)
-  FlavourCard.tsx       product card (homepage = single CTA, shop = cart buttons + price)
-  MakhanaPouch.tsx      pouch photo with the printed FreshMewa label for a flavour
-  PouchTrio.tsx         three floating pouches
-  Hero.tsx              homepage hero (parallax bowl + poster headline)
-  SmoothScroll.tsx      Lenis root (disabled for reduced-motion users)
-  sections/             homepage sections; Faq, FinalCta, Marquee, Footer are shared with /shop
-  shop/ShopSections.tsx shop-only sections
-  product/              product page client components
-  ui/Reveal.tsx         fade-up on scroll
-  ui/Ornaments.tsx      Veneer Extras glyphs (✦ star "z", flourish "7")
-lib/
-  content.ts            ALL copy + product data (single source of truth, CMS-ready)
-  cart.ts               cart store (localStorage) + pure helpers
-  cart.test.ts          runnable check for the cart helpers
-  motion.ts             shared easing, reveal variants, mouse-parallax hook
-scripts/cutout.mjs      turns product photos shot on white into transparent WebP cutouts
-public/images/hero/     product images (WebP cutouts)
-```
+Every page is a folder in `app/` (folder path = URL). Code that only runs on the **server** (database, login, admin checks) imports `"server-only"`; code that runs in the **browser** starts with `"use client"`. Shared rules/types that both need live in `lib/orders.ts`.
+
+### Root files
+
+| File | What it does |
+|---|---|
+| `.env.local` | **Secrets** (database URL, Neon Auth URLs, cookie secret). Git-ignored — never commit or share. |
+| `neon.ts`, `.neon/` | Neon project link + services (`auth: true`). Used by `neon deploy`. |
+| `drizzle.config.ts` | Settings for `npx drizzle-kit push` (where the schema is, which DB URL). |
+| `next.config.ts` | Next.js settings (image formats etc.). |
+| `tsconfig.json` | TypeScript settings (`@/…` = project root). |
+| `AGENTS.md` / `CLAUDE.md` | Notes for AI coding tools. |
+
+### `app/` — pages and server code
+
+| Folder / file | URL | What it does |
+|---|---|---|
+| `layout.tsx` | every page | Fonts, metadata, motion + smooth scroll, shop Navbar/Footer (hidden on `/admin`) |
+| `globals.css` | — | Design tokens (colours, fonts) + shared classes (`poster-h2`, `btn`, …) |
+| `page.tsx` | `/` | Homepage (section order) |
+| `fonts/` | — | Subset WOFF2 Veneer fonts the site actually loads |
+| `icon.png`, `apple-icon.png`, `favicon.ico` | — | Browser/phone icons |
+| `shop/page.tsx` | `/shop` | Shop page |
+| `shop/[slug]/page.tsx` | `/shop/pudina` … | Product page (`[slug]` = the flavour in the URL) |
+| `our-story/` | `/our-story` | Brand story page |
+| `shipping-returns/` | `/shipping-returns` | Shipping & returns policy |
+| `checkout/page.tsx` | `/checkout` | Checkout page |
+| `checkout/actions.ts` | — | **`placeOrder` server action**: validates, prices and saves the order to the database |
+| `checkout/success/` | `/checkout/success` | Order confirmation |
+| `account/` | `/account` | My Account (orders + saved addresses on this device) |
+| `api/auth/[...path]/route.ts` | `/api/auth/*` | Forwards login/session requests to Neon Auth |
+| `admin/page.tsx` | `/admin` | Redirects to `/admin/orders` |
+| `admin/login/` | `/admin/login` | Admin sign-in form + its server action |
+| `admin/(panel)/` | — | Everything behind login. `(panel)` is a *route group*: brackets keep it out of the URL |
+| `admin/(panel)/layout.tsx` | — | Admin header (email, Sign out) + admin check |
+| `admin/(panel)/actions.ts` | — | `signOut` server action |
+| `admin/(panel)/orders/page.tsx` | `/admin/orders` | Orders list + status filter tabs |
+| `admin/(panel)/orders/[id]/page.tsx` | `/admin/orders/FM-…` | One order: items, totals, customer, address, status dropdown |
+| `admin/(panel)/orders/actions.ts` | — | `updateStatus` server action |
+
+### `components/` — UI pieces used by the pages
+
+| Folder / file | What it does |
+|---|---|
+| `Navbar.tsx` | Sticky navbar, mobile menu, cart badge |
+| `CartDrawer.tsx` | Slide-in cart (qty, remove, subtotal, savings) |
+| `CartButtons.tsx` | Add to Cart + Buy Now |
+| `FlavourCard.tsx` | Product card (homepage = CTA, shop = price + cart buttons) |
+| `MakhanaPouch.tsx`, `PouchTrio.tsx` | Pouch image with flavour label; three floating pouches |
+| `Hero.tsx` | Homepage hero |
+| `SmoothScroll.tsx` | Lenis smooth scroll (off for reduced-motion users) |
+| `HideOnAdmin.tsx` | Hides the shop Navbar/Footer on `/admin` pages |
+| `Logo.tsx` | Logo used in the mobile menu |
+| `sections/` | Homepage sections; `Faq`, `FinalCta`, `Marquee`, `Footer` are reused on other pages |
+| `shop/` | Shop-page-only sections |
+| `product/` | Product page gallery + buy box |
+| `story/` | Our Story chapters, chapter nav, reading progress |
+| `checkout/` | Checkout form + order confirmation |
+| `account/` | My Account view + "Add New Address" dialog |
+| `ui/` | Small shared bits: `Reveal` (fade-up on scroll), `Ornaments` (Veneer glyphs) |
+
+### `lib/` — data, rules and stores (no UI)
+
+| File | Runs in | What it does |
+|---|---|---|
+| `content.ts` | both | **All copy + product data** (flavours, packs, prices, FAQs, checkout settings) — edit text/prices here |
+| `orders.ts` | both | Order/address types, `orderStatuses`, `MAX_QTY`, validation + helpers (server-safe, no `"use client"`) |
+| `cart.ts` | browser | Cart store (localStorage) |
+| `account.ts` | browser | My Account store (profile, addresses, orders on this device) |
+| `motion.ts` | browser | Shared animation easing/variants/parallax hooks |
+| `*.test.ts` | — | Runnable checks: `node lib/cart.test.ts`, `node lib/account.test.ts` |
+| `db/schema.ts` | server | Database tables (Drizzle). Change → `npx drizzle-kit push` |
+| `db/index.ts` | server | The `db` client (Neon over HTTP) |
+| `db/orders.ts` | server | Admin order queries (`listOrders`, `getOrder`, `setOrderStatus`) — each checks admin itself |
+| `auth/server.ts` | server | Neon Auth instance (`auth.getSession`, `auth.signIn`, …) |
+| `auth/admin.ts` | server | `requireAdmin()` — call at the top of every admin page/action |
+
+### Assets and tools
+
+| Folder | What it does |
+|---|---|
+| `public/images/hero/` | Product + illustration images the site uses (optimized WebP) |
+| `public/images/logo.webp` | Site logo (600px) |
+| `public/fonts/` | Original Veneer font files (TTF/PDF) — **source only**; the site loads the subsets in `app/fonts/` |
+| `brand/` | Full-size originals (logo PNG, photo masters) + `image-backups/` — not served, kept for re-exporting |
+| `scripts/cutout.mjs` | Turns photos shot on white into transparent WebP cutouts |
+| `.claude/` | AI tool config (`launch.json` for preview servers, Neon skills) |
+| `output/` | Scratch screenshots/previews — not part of the site, not committed |
+
+> Not used by the site (safe to move to `brand/` or delete): `public/makhana-brown-bowl-no-leaves.png` (2.5 MB), `public/images/Mithila Plain Makhana.jpg`, and the default Next.js SVGs in `public/` (`file.svg`, `globe.svg`, `next.svg`, `vercel.svg`, `window.svg`).
 
 ---
 
@@ -130,7 +190,7 @@ Flow: product/shop card → **Add to Cart / Buy Now** → cart drawer → **Chec
 **Orders are saved to the database** (`app/checkout/actions.ts`, see *Database* below). Accounts ("My Account", saved addresses) still live only in the customer's browser (localStorage):
 
 - [x] Save orders server-side and **recalculate prices on the server** (`placeOrder`)
-- [ ] Admin page to see orders and update their status (until then: Neon console → Tables → orders)
+- [x] Admin page to see orders and update their status (`/admin`)
 - [ ] Real login (phone OTP) so "My Account" works across devices; today "Log out" just clears this device
 - [ ] Online payments (e.g. Razorpay) + order status updates
 - [ ] Set the delivery fee policy
@@ -143,6 +203,14 @@ Flow: product/shop card → **Add to Cart / Buy Now** → cart drawer → **Chec
 - Change the schema, then apply it: `npx drizzle-kit push` (uses the unpooled URL, see `drizzle.config.ts`).
 - **Placing an order** = server action `placeOrder` in `app/checkout/actions.ts`. The browser sends only the form + cart lines (slug, pack, qty); the server re-validates them, rejects unknown flavours/packs and quantities outside 1–`MAX_QTY`, prices everything from `lib/content.ts`, then inserts the row. The checkout form shows its error message under the button.
 - **Server vs browser code:** a `"use client"` file's exports are only placeholders on the server (a `MAX_QTY` imported from `lib/cart.ts` silently stopped working this way). Shared types, rules and constants go in `lib/orders.ts` (no `"use client"`); `lib/account.ts` / `lib/cart.ts` are browser stores.
+
+## Admin (`/admin`)
+
+- **Login:** `/admin/login` (email + password via **Neon Auth**, `lib/auth/server.ts`; browser auth calls go through `app/api/auth/[...path]`). Needs `NEON_AUTH_COOKIE_SECRET` in `.env.local` (32+ random chars).
+- **Who gets in:** only users with role `admin`. Add one: sign up through `/api/auth/sign-up/email`, then Neon console → Auth → Users → ⋯ → **Make admin**. (Users created in the console have no password.)
+- **Pages:** `/admin/orders` (newest first, filter by status) → `/admin/orders/[id]` (items, totals, customer, address, status dropdown). Admin pages hide the shop navbar/footer (`components/HideOnAdmin.tsx`).
+- **Security rule:** every order query lives in `lib/db/orders.ts` and calls `requireAdmin()` (`lib/auth/admin.ts`) itself — pages *and* server actions are protected even if called directly. Tested: a logged-out `updateStatus` request is redirected to the login and the order is unchanged.
+- Server-only files import `"server-only"` so the build fails if browser code ever imports them.
 
 ## Cart
 
