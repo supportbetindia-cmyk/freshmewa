@@ -12,6 +12,7 @@ const fraunces = Fraunces({
   variable: "--font-fraunces",
   subsets: ["latin"],
   style: ["normal", "italic"],
+  preload: false, // ~82 KB; above the fold it's only the small "Made for Every Day." line, so don't let it compete with the hero
 });
 
 const manrope = Manrope({

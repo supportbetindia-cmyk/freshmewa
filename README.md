@@ -212,6 +212,14 @@ Flow: product/shop card → **Add to Cart / Buy Now** → cart drawer → **Chec
 - [ ] Online payments (e.g. Razorpay) + order status updates
 - [ ] Set the delivery fee policy
 
+## Deploying (Hostinger)
+
+- **Build:** `npm run build` (= `next build --webpack`). Webpack, not Turbopack: Turbopack starts many helper processes in parallel and hit Hostinger's per-account process/memory limits ("node process exited before we could connect to it"). Same site, slower build. `npm run dev` still uses Turbopack.
+- **Start:** `npm start` (`next start`, uses Hostinger's `PORT`).
+- **Environment variables** (Hostinger panel, never in git): `DATABASE_URL`, `DATABASE_URL_UNPOOLED`, `NEON_AUTH_BASE_URL`, `NEON_AUTH_JWKS_URL`, `NEON_AUTH_COOKIE_SECRET` (make a new one for production).
+- **Neon Auth:** add the live domain as a trusted domain (`neon neon-auth domain add https://your-domain`), or login redirects fail with "invalid domain".
+- **Server location:** pick the data centre closest to Neon (Singapore) — every database/login call crosses that distance.
+
 ## Database (Neon Postgres + Drizzle)
 
 - Neon project `freshmewa`, branch `production`; linked with `neon link` (`.neon/`, `neon.ts` has `auth: true`). `neon deploy` writes `DATABASE_URL`, `DATABASE_URL_UNPOOLED` and the `NEON_AUTH_*` vars into `.env.local` (git-ignored, never commit it).
