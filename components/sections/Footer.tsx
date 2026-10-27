@@ -33,7 +33,7 @@ export default function Footer() {
         <div className="absolute bottom-[calc(var(--curve)*0.05)] left-1/2 z-10 w-[clamp(13rem,30vw,25rem)] -translate-x-1/2">
           <Image
             src={spicedBowl}
-            quality={90}
+            quality={75}
             alt=""
             sizes="(min-width: 1024px) 25rem, 60vw"
             className="h-auto w-full drop-shadow-[0_24px_24px_rgba(20,36,16,0.35)]"

@@ -13,7 +13,6 @@ import CartDrawer from "./CartDrawer";
 import { cart, countItems, useCart } from "@/lib/cart";
 import { ease } from "@/lib/motion";
 import { navLinks } from "@/lib/content";
-import { requireUser } from "@/lib/auth/users";
 
 
 const iconBtn =
@@ -69,11 +68,10 @@ export default function Navbar() {
 
   return (
     <>
-      <m.header
-        initial={{ y: -24, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.9, ease, delay: 0.2 }}
-        className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-5 sm:pt-4"
+      {/* CSS entrance (globals.css enter-fade-up): visible at first paint, no waiting for JavaScript */}
+      <header
+        style={{ "--enter-y": "-24px", animationDuration: "0.9s", animationDelay: "0.2s" } as React.CSSProperties}
+        className="enter-fade-up fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-5 sm:pt-4"
       >
         <nav
           aria-label="Main"
@@ -120,7 +118,7 @@ export default function Navbar() {
             </button>
           </div>
         </nav>
-      </m.header>
+      </header>
 
       <AnimatePresence>
         {open && (

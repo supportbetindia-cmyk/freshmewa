@@ -16,7 +16,7 @@ export default function BrandValue() {
             <div aria-hidden className="absolute inset-x-[6%] bottom-[2%] h-[38%] rounded-[50%] bg-gold-soft/45 blur-2xl" />
             <Image
               src={chaiBowl}
-              quality={90}
+              quality={75}
               alt="Green bowl of roasted makhana beside a kulhad of chai, with cinnamon and cardamom"
               sizes="(min-width: 1024px) 36rem, 90vw"
               className="relative h-auto w-full"

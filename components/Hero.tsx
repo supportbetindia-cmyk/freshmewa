@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { m, useReducedMotion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { ease, reveal, useDepth, useMouseParallax } from "@/lib/motion";
+import { useDepth, useMouseParallax } from "@/lib/motion";
 import spicedBowl from "@/public/images/hero/makhana-bowl-spiced.webp";
 
 export default function Hero() {
@@ -31,14 +31,9 @@ export default function Hero() {
       className="relative overflow-hidden lg:h-svh lg:min-h-[680px] "
     >
       {/* ── Background ─────────────────────────────── */}
-      <m.div
-        aria-hidden
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1.4, ease }}
-        style={{ y: bgY }}
-        className="grain absolute inset-0 will-change-transform"
-      >
+      {/* Entrance animations on this screen are CSS (enter-* in globals.css): they start at first paint, not after
+          the JavaScript loads — so the headline and bowl show up fast (LCP). Framer only drives the parallax. */}
+      <m.div aria-hidden style={{ y: bgY }} className="enter-fade grain absolute inset-0 will-change-transform">
         <div className="absolute inset-0 bg-[radial-gradient(45%_45%_at_50%_70%,var(--color-gold-soft)_0%,transparent_75%)] opacity-55" />
         <div className="absolute inset-0 bg-[radial-gradient(40%_40%_at_0%_100%,var(--color-pista-soft)_0%,transparent_70%)] opacity-70" />
         <div className="absolute inset-0 bg-[radial-gradient(35%_35%_at_100%_0%,var(--color-pista-soft)_0%,transparent_70%)] opacity-40" />
@@ -59,14 +54,9 @@ export default function Hero() {
                       0.86 line, and Safari clipped their tops. Letters start at 135% so they're fully hidden below it. */}
                   {word.split("").map((ch, i) => (
                     <span key={i} className="-my-[0.15em] inline-block overflow-hidden py-[0.15em] align-top">
-                      <m.span
-                        className="inline-block"
-                        initial={{ y: "135%" }}
-                        animate={{ y: 0 }}
-                        transition={{ duration: 1.05, ease, delay: 0.3 + wi * 0.25 + i * 0.04 }}
-                      >
+                      <span className="enter-rise inline-block" style={{ animationDelay: `${0.3 + wi * 0.25 + i * 0.04}s` }}>
                         {ch}
-                      </m.span>
+                      </span>
                     </span>
                   ))}
                   {wi === 0 && <span className="hidden lg:inline"> </span>}
@@ -90,7 +80,7 @@ export default function Hero() {
           style={{ y: copyY }}
           className="relative z-20 mt-4 grid w-full gap-5 text-center lg:pointer-events-none lg:absolute lg:inset-x-8 lg:bottom-12 lg:mt-0 lg:w-auto lg:grid-cols-[minmax(0,24rem)_1fr_minmax(0,19rem)] lg:items-end lg:text-left"
         >
-          <m.div variants={reveal} initial="hidden" animate="show" custom={0.9} className="lg:pointer-events-auto">
+          <div className="enter-fade-up lg:pointer-events-auto" style={{ animationDelay: "0.9s" }}>
             <p aria-hidden className="font-display text-[2rem] italic leading-none text-gold sm:text-[2.5rem] lg:whitespace-nowrap">
               Made for Every Day.
             </p>
@@ -108,19 +98,16 @@ export default function Hero() {
                 Meet Fresh Mewa
               </Link>
             </div>
-          </m.div>
+          </div>
 
           <span className="max-lg:hidden" />
 
-          <m.p
-            variants={reveal}
-            initial="hidden"
-            animate="show"
-            custom={1.05}
-            className="mx-auto max-w-sm text-[0.95rem] leading-relaxed text-ink-muted lg:pointer-events-auto lg:mx-0 lg:border-l lg:border-gold/40 lg:pl-5"
+          <p
+            style={{ animationDelay: "1.05s" }}
+            className="enter-fade-up mx-auto max-w-sm text-[0.95rem] leading-relaxed text-ink-muted lg:pointer-events-auto lg:mx-0 lg:border-l lg:border-gold/40 lg:pl-5"
           >
             From your desk to your chai break, from travel plans to movie nights, Fresh Mewa brings roasted makhana into the little moments that make up your day.
-          </m.p>
+          </p>
         </m.div>
       </div>
     </section>
@@ -136,10 +123,9 @@ function HeroBowl({ mx, my }: Mouse) {
 
   return (
     <m.div style={{ x, y, rotate }} className="will-change-transform">
-      <m.div
-        initial={{ opacity: 0, y: 90, scale: 0.92 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 1.3, ease, delay: 0.55 }}
+      <div
+        className="enter-fade-up"
+        style={{ "--enter-y": "90px", "--enter-scale": 0.92, animationDuration: "1.3s", animationDelay: "0.55s" } as React.CSSProperties}
       >
         <m.div
           className="group relative"
@@ -152,7 +138,7 @@ function HeroBowl({ mx, my }: Mouse) {
           />
           <Image
             src={spicedBowl}
-            quality={90}
+            quality={80}
             alt="Bowl of seasoned roasted makhana"
             loading="eager"
             fetchPriority="high"
@@ -161,7 +147,7 @@ function HeroBowl({ mx, my }: Mouse) {
             draggable={false}
           />
         </m.div>
-      </m.div>
+      </div>
     </m.div>
   );
 }

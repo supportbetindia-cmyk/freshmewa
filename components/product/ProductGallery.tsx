@@ -61,7 +61,7 @@ export default function ProductGallery({ flavour: f }: { flavour: Flavour }) {
             ) : (
               <Image
                 src={shots[active - 1].src}
-                quality={90}
+                quality={75}
                 alt={shots[active - 1].alt}
                 sizes="(min-width: 1024px) 36vw, 80vw"
                 className={`h-auto drop-shadow-[0_24px_24px_rgba(30,52,24,0.22)] ${shots[active - 1].width}`}

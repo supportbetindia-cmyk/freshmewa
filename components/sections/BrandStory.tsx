@@ -17,7 +17,7 @@ export default function BrandStory() {
           </Reveal>
           <Reveal delay={0.08} className="relative mx-auto mt-6 w-[70%] max-w-sm lg:mx-0 lg:w-[80%]">
             <div aria-hidden className="absolute -inset-[6%] rounded-full border border-dashed border-gold/40" />
-            <Image src={plainBowl} quality={90} alt="Bowl of roasted makhana" sizes="(min-width: 1024px) 24rem, 70vw" className="relative h-auto w-full" />
+            <Image src={plainBowl} quality={75} alt="Bowl of roasted makhana" sizes="(min-width: 1024px) 24rem, 70vw" className="relative h-auto w-full" />
           </Reveal>
         </div>
 

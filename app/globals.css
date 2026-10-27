@@ -151,3 +151,15 @@ body {
 .blog-content blockquote { border-left: 3px solid var(--color-gold-soft); padding-left: 1em; color: var(--color-ink-muted); font-style: italic; }
 .blog-content img { border-radius: 1rem; max-width: 100%; height: auto; }
 .blog-content :is(h2, h3) { scroll-margin-top: 7rem; } /* jump links land below the fixed navbar */
+/* First-screen entrance animations (hero + navbar). CSS instead of framer-motion so they start at the first paint,
+   not after the JavaScript loads — the headline and bowl appear sooner (LCP). Same easing/timings as before;
+   tune per element with style={{ animationDelay, animationDuration, "--enter-y", "--enter-scale" }}. */
+@keyframes enter-rise { from { transform: translateY(var(--enter-y, 135%)); } }
+@keyframes enter-fade-up { from { opacity: 0; transform: translateY(var(--enter-y, 32px)) scale(var(--enter-scale, 1)); } }
+@keyframes enter-fade { from { opacity: 0; } }
+.enter-rise { animation: enter-rise 1.05s var(--ease-premium) both; }
+.enter-fade-up { animation: enter-fade-up 1s var(--ease-premium) both; }
+.enter-fade { animation: enter-fade 1.4s var(--ease-premium) both; }
+@media (prefers-reduced-motion: reduce) {
+  .enter-rise, .enter-fade-up, .enter-fade { animation: none; }
+}

@@ -17,7 +17,7 @@ export default function Intro() {
           </p>
           <Image
             src={chaiMakhana}
-            quality={90}
+            quality={75}
             alt="Two kulhads of chai with roasted makhana spilled beside them"
             sizes="(min-width: 1024px) 21rem, 65vw"
             className="mx-auto mt-5 h-auto w-[65%] max-w-[21rem] lg:mx-0"
@@ -33,7 +33,7 @@ export default function Intro() {
           <Reveal delay={0.15} className="absolute right-0 top-0 z-10 w-[var(--hand)] sm:right-4">
             <Image
               src={handMakhana}
-              quality={90}
+              quality={75}
               alt="Illustrated hand tossing a handful of roasted makhana"
               sizes="(min-width: 1024px) 16rem, 30vw"
               className="h-auto w-full -rotate-3 animate-[float_6s_ease-in-out_infinite] motion-reduce:animate-none"

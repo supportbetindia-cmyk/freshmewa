@@ -17,7 +17,7 @@ export default function MakhanaPouch({
         src={productImage(flavour?.slug)}
         alt={`Fresh Mewa ${flavour?.name ?? "Salt & Pepper Makhana"} jar`}
         sizes={sizes}
-        quality={90}
+        quality={75}
         loading={priority ? "eager" : "lazy"}
         fetchPriority={priority ? "high" : "auto"}
         className="h-auto w-full drop-shadow-[0_26px_26px_rgba(30,52,24,0.25)]"

@@ -4,11 +4,11 @@ import { useRef, useState } from "react";
 import Link from "next/link";
 import { useLenis } from "lenis/react";
 import { Award, ChevronRight, ClipboardList, ListOrdered, LogOut, MapPin, Plus, Trash2 } from "lucide-react";
-import { account, formatAddress, useAccount } from "@/lib/account";
+import { account, formatAddress, useAccount, type Address } from "@/lib/account";
 import AddressDialog from "./AddressDialog";
 import { formatINR } from "@/lib/content";
 import type { MyOrder } from "@/lib/db/orders";
-import { logOut } from "@/app/account/actions";
+import { deleteAddress, logOut, makeDefaultAddress } from "@/app/account/actions";
 
 const tabs = [
   { id: "orders", title: "My Orders", sub: "View History", Icon: ListOrdered },
@@ -19,8 +19,10 @@ type Tab = (typeof tabs)[number]["id"];
 
 const date = (d: Date | string) => new Date(d).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric" });
 
-export default function AccountView({ user, orders }: { user: { name: string; email: string }; orders: MyOrder[] }) {
-  const { profile, addresses, ready } = useAccount();
+export default function AccountView({ user, orders, addresses }: { user: { name: string; email: string }; orders: MyOrder[]; addresses: Address[] }) {
+  const { ready } = useAccount();
+  const contact = addresses[0]; // default address = first
+  const profile = { name: contact?.name || user.name, phone: contact?.phone ?? "", email: contact?.email || user.email };
   const [tab, setTab] = useState<Tab>("orders");
   const dialog = useRef<HTMLDialogElement>(null);
   const lenis = useLenis();
@@ -39,7 +41,7 @@ export default function AccountView({ user, orders }: { user: { name: string; em
         <div className="mx-auto flex max-w-6xl flex-wrap items-end justify-between gap-3 px-5 pb-8 sm:px-8">
           <h1 className="poster-h2 text-forest">My Account</h1>
           <div className="text-right">
-            <p className="font-poster text-3xl leading-none text-forest">{user.name || profile?.name || "Hello!"}</p>
+            <p className="font-poster text-3xl leading-none text-forest">{profile.name || "Hello!"}</p>
             <p className="mt-1 text-sm text-ink-muted">{user.email}</p>
           </div>
         </div>
@@ -165,22 +167,26 @@ export default function AccountView({ user, orders }: { user: { name: string; em
                         )}
                         <p className="leading-relaxed text-ink">{formatAddress(a)}</p>
                         {i > 0 && (
-                          <button
-                            type="button"
-                            onClick={() => account.setDefaultAddress(a.id)}
-                            className="mt-2 w-fit text-sm font-semibold text-forest underline decoration-forest/25 underline-offset-4 hover:decoration-forest"
-                          >
-                            Set as default
-                          </button>
+                          <form action={makeDefaultAddress} className="mt-2">
+                            <input type="hidden" name="id" value={a.id} />
+                            <button
+                              type="submit"
+                              className="text-sm font-semibold text-forest underline decoration-forest/25 underline-offset-4 hover:decoration-forest"
+                            >
+                              Set as default
+                            </button>
+                          </form>
                         )}
-                        <button
-                          type="button"
-                          onClick={() => account.removeAddress(a.id)}
-                          aria-label={`Remove address ${a.line}`}
-                          className="absolute right-3 top-3 grid size-8 place-items-center rounded-full text-ink-muted hover:bg-chilli-soft hover:text-chilli"
-                        >
-                          <Trash2 className="size-4" strokeWidth={1.6} />
-                        </button>
+                        <form action={deleteAddress} className="absolute right-3 top-3">
+                          <input type="hidden" name="id" value={a.id} />
+                          <button
+                            type="submit"
+                            aria-label={`Remove address ${a.line}`}
+                            className="grid size-8 place-items-center rounded-full text-ink-muted hover:bg-chilli-soft hover:text-chilli"
+                          >
+                            <Trash2 className="size-4" strokeWidth={1.6} />
+                          </button>
+                        </form>
                       </li>
                     ))}
                   </ul>

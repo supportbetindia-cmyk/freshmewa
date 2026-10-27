@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useLenis } from "lenis/react";
 import { ArrowLeft } from "lucide-react";
-import { account, validateAddress, type AddressForm, type Profile } from "@/lib/account";
+import { validateAddress, type AddressForm, type Profile } from "@/lib/orders";
+import { saveAddress } from "@/app/account/actions";
 import { indianStates } from "@/lib/content";
 
 const fields: (keyof AddressForm)[] = ["name", "phone", "email", "line", "line2", "locality", "landmark", "pincode", "city", "state"];
@@ -17,11 +18,13 @@ const box =
  */
 export default function AddressDialog({ profile, ref }: { profile: Profile | null; ref: React.Ref<HTMLDialogElement> }) {
   const [errors, setErrors] = useState<Partial<Record<keyof AddressForm, string>>>({});
+  const [saving, setSaving] = useState(false);
+  const [serverError, setServerError] = useState("");
   const lenis = useLenis();
 
   const close = (e: React.SyntheticEvent) => (e.currentTarget.closest("dialog") as HTMLDialogElement).close();
 
-  function submit(e: React.FormEvent<HTMLFormElement>) {
+  async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
     const data = new FormData(form);
@@ -33,10 +36,14 @@ export default function AddressDialog({ profile, ref }: { profile: Profile | nul
       (form.elements.namedItem(firstBad) as HTMLElement)?.focus();
       return;
     }
-    // Grab the dialog first: saving can create the profile, which re-keys (remounts) this form.
     const dialog = form.closest("dialog") as HTMLDialogElement;
+    setSaving(true);
+    setServerError("");
+    const res = await saveAddress(data).catch(() => ({ error: "Couldn't reach the store. Check your connection and try again." }));
+    setSaving(false);
+    if ("errors" in res && res.errors) return setErrors(res.errors);
+    if ("error" in res && res.error) return setServerError(res.error);
     form.reset();
-    account.addAddress({ id: crypto.randomUUID(), ...f }, data.get("default") === "on");
     dialog.close();
   }
 
@@ -167,9 +174,10 @@ export default function AddressDialog({ profile, ref }: { profile: Profile | nul
           Make Default address
         </label>
 
+        {serverError && <p role="alert" className="mt-4 text-center text-sm font-medium text-chilli">{serverError}</p>}
         <div className="mt-6 flex justify-center">
-          <button type="submit" className="btn btn-primary h-14 w-full max-w-sm">
-            Add Address
+          <button type="submit" disabled={saving} className="btn btn-primary h-14 w-full max-w-sm disabled:opacity-60">
+            {saving ? "Saving…" : "Add Address"}
           </button>
         </div>
       </form>
