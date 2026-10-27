@@ -1,0 +1,50 @@
+{
+  "tool": "Built-in image_gen",
+  "assets": [
+    {
+      "name": "pudina-bowl",
+      "path": "C:\\Users\\user\\.codex\\generated_images\\01a1100d-7c6f-7d60-a888-4c8ea9058924\\exec-d04a8b9f-d5d5-4186-8ebe-ecd398b3d494.png",
+      "prompt": "Premium photorealistic pudina mint makhana food photograph, transparent background, soft studio lighting, dark wooden bowl (angled or overhead) or three-puff macro with airy interior; no text or packaging."
+    },
+    {
+      "name": "pudina-top",
+      "path": "C:\\Users\\user\\.codex\\generated_images\\01a1100d-7c6f-7d60-a888-4c8ea9058924\\exec-f64dead7-878d-4ea6-a8b1-e2bc63522e42.png",
+      "prompt": "Premium photorealistic pudina mint makhana food photograph, transparent background, soft studio lighting, dark wooden bowl (angled or overhead) or three-puff macro with airy interior; no text or packaging."
+    },
+    {
+      "name": "pudina-close",
+      "path": "C:\\Users\\user\\.codex\\generated_images\\01a1100d-7c6f-7d60-a888-4c8ea9058924\\exec-bc7c3b67-4142-4621-8c9e-c9755fb432bf.png",
+      "prompt": "Premium photorealistic pudina mint makhana food photograph, transparent background, soft studio lighting, dark wooden bowl (angled or overhead) or three-puff macro with airy interior; no text or packaging."
+    },
+    {
+      "name": "salt-pepper-bowl",
+      "path": "C:\\Users\\user\\.codex\\generated_images\\01a1100d-7c6f-7d60-a888-4c8ea9058924\\exec-e3d6378e-a56a-45e1-b75b-20c82fd6b6fd.png",
+      "prompt": "Use case: product-mockup. Premium photorealistic food photography for an ecommerce product gallery. Subject: ivory roasted makhana fox nuts speckled with cracked black pepper and fine salt, no green herbs. Composition: Three-quarter elevated view of a complete dark wooden bowl generously filled with the seasoned makhana. Centered complete subject with generous clear margins in square frame. Soft studio lighting, crisp natural roasted porous texture, appetizing realistic food. Genuine transparent background, no surface, no text, no packaging, no watermark, no extra props."
+    },
+    {
+      "name": "salt-pepper-top",
+      "path": "C:\\Users\\user\\.codex\\generated_images\\01a1100d-7c6f-7d60-a888-4c8ea9058924\\exec-4705054e-c0fc-4204-946b-2b69cf0f918f.png",
+      "prompt": "Use case: product-mockup. Premium photorealistic food photography for an ecommerce product gallery. Subject: ivory roasted makhana fox nuts speckled with cracked black pepper and fine salt, no green herbs. Composition: Direct overhead view of a complete round dark wooden bowl filled with the seasoned makhana. Centered complete subject with generous clear margins in square frame. Soft studio lighting, crisp natural roasted porous texture, appetizing realistic food. Genuine transparent background, no surface, no text, no packaging, no watermark, no extra props."
+    },
+    {
+      "name": "salt-pepper-close",
+      "path": "C:\\Users\\user\\.codex\\generated_images\\01a1100d-7c6f-7d60-a888-4c8ea9058924\\exec-4c40e5ac-eb96-4dbb-803e-5194f33d6d70.png",
+      "prompt": "Use case: product-mockup. Premium photorealistic food photography for an ecommerce product gallery. Subject: ivory roasted makhana fox nuts speckled with cracked black pepper and fine salt, no green herbs. Composition: Macro view of three seasoned makhana puffs, one broken to reveal airy white interior, no bowl. Centered complete subject with generous clear margins in square frame. Soft studio lighting, crisp natural roasted porous texture, appetizing realistic food. Genuine transparent background, no surface, no text, no packaging, no watermark, no extra props."
+    },
+    {
+      "name": "peri-peri-bowl",
+      "path": "C:\\Users\\user\\.codex\\generated_images\\01a1100d-7c6f-7d60-a888-4c8ea9058924\\exec-1b3a9680-afbe-4d07-8750-c7c9d1ba2e23.png",
+      "prompt": "Use case: product-mockup. Premium photorealistic food photography for an ecommerce product gallery. Subject: roasted makhana fox nuts coated in warm orange-red peri peri seasoning with fine chilli flakes, no green herbs. Composition: Three-quarter elevated view of a complete dark wooden bowl generously filled with the seasoned makhana. Centered complete subject with generous clear margins in square frame. Soft studio lighting, crisp natural roasted porous texture, appetizing realistic food. Genuine transparent background, no surface, no text, no packaging, no watermark, no extra props."
+    },
+    {
+      "name": "peri-peri-top",
+      "path": "C:\\Users\\user\\.codex\\generated_images\\01a1100d-7c6f-7d60-a888-4c8ea9058924\\exec-caf5af42-d372-464f-903a-226228a0314f.png",
+      "prompt": "Use case: product-mockup. Premium photorealistic food photography for an ecommerce product gallery. Subject: roasted makhana fox nuts coated in warm orange-red peri peri seasoning with fine chilli flakes, no green herbs. Composition: Direct overhead view of a complete round dark wooden bowl filled with the seasoned makhana. Centered complete subject with generous clear margins in square frame. Soft studio lighting, crisp natural roasted porous texture, appetizing realistic food. Genuine transparent background, no surface, no text, no packaging, no watermark, no extra props."
+    },
+    {
+      "name": "peri-peri-close",
+      "path": "C:\\Users\\user\\.codex\\generated_images\\01a1100d-7c6f-7d60-a888-4c8ea9058924\\exec-c24a0556-16f1-442e-b3da-474146e348aa.png",
+      "prompt": "Use case: product-mockup. Premium photorealistic food photography for an ecommerce product gallery. Subject: roasted makhana fox nuts coated in warm orange-red peri peri seasoning with fine chilli flakes, no green herbs. Composition: Macro view of three seasoned makhana puffs, one broken to reveal airy white interior, no bowl. Centered complete subject with generous clear margins in square frame. Soft studio lighting, crisp natural roasted porous texture, appetizing realistic food. Genuine transparent background, no surface, no text, no packaging, no watermark, no extra props."
+    }
+  ]
+}

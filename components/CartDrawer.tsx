@@ -7,7 +7,7 @@ import { Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import { cart, countItems, useCart } from "@/lib/cart";
 import { flavours, formatINR, packById, tones } from "@/lib/content";
 import { ease } from "@/lib/motion";
-import pouch from "@/public/images/hero/makhana-pouch.webp";
+import { productImage } from "@/lib/product-images";
 
 const bySlug = Object.fromEntries(flavours.map((f) => [f.slug, f]));
 
@@ -86,7 +86,7 @@ export default function CartDrawer() {
                         className="flex gap-4 py-4"
                       >
                         <div className={`grid size-20 shrink-0 place-items-center rounded-2xl ${t.soft}`}>
-                          <Image src={pouch} alt="" sizes="3rem" className="h-auto w-12" />
+                          <Image src={productImage(f.slug)} alt="" sizes="3rem" className="h-18 w-12 object-contain" />
                         </div>
                         <div className="flex flex-1 flex-col">
                           <div className="flex items-start justify-between gap-2">

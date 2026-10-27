@@ -13,6 +13,7 @@ import CartDrawer from "./CartDrawer";
 import { cart, countItems, useCart } from "@/lib/cart";
 import { ease } from "@/lib/motion";
 import { navLinks } from "@/lib/content";
+import { requireUser } from "@/lib/auth/users";
 
 
 const iconBtn =
@@ -28,9 +29,10 @@ export default function Navbar() {
   const cartCount = countItems(lines);
   const locked = open || cartOpen;
 
+
   useMotionValueEvent(scrollY, "change", (y) => setScrolled(y > 24));
 
-  // Lock page scroll + close on Escape while the menu or cart drawer is open.
+
   useEffect(() => {
     if (!locked) return;
     lenis?.stop();
@@ -63,6 +65,8 @@ export default function Navbar() {
     }
   };
 
+
+
   return (
     <>
       <m.header
@@ -73,7 +77,7 @@ export default function Navbar() {
       >
         <nav
           aria-label="Main"
-          className={`mx-auto flex auto max-w-7xl items-center justify-between rounded-full px-3 transition-[background-color,box-shadow,border-color] duration-500 ease-premium sm:px-5 ${
+          className={`mx-auto grid max-w-7xl grid-cols-[1fr_auto_1fr] items-center rounded-full px-3 transition-[background-color,box-shadow,border-color] duration-500 ease-premium sm:px-5 ${
             scrolled
               ? "border border-white/60 bg-cream/90 shadow-[0_8px_30px_-12px_rgba(30,52,24,0.18)] backdrop-blur-sm"
               : "border border-transparent"
@@ -95,7 +99,7 @@ export default function Navbar() {
             <Image src={logo} alt="Fresh Mewa" sizes="100px" loading="eager" className="h-auto w-25" />
           </Link>
 
-          <div className="flex items-center gap-0.5">
+          <div className="flex items-center gap-0.5 justify-self-end">
             <Link href="/account" aria-label="My account" className={iconBtn}>
               <User className="size-[1.15rem]" strokeWidth={1.6} />
             </Link>

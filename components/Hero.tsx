@@ -28,7 +28,7 @@ export default function Hero() {
     <section
       ref={ref}
       aria-label="Fresh Mewa roasted makhana"
-      className="relative overflow-hidden lg:h-svh lg:min-h-[680px]"
+      className="relative overflow-hidden lg:h-svh lg:min-h-[680px] "
     >
       {/* ── Background ─────────────────────────────── */}
       <m.div
@@ -44,7 +44,7 @@ export default function Hero() {
         <div className="absolute inset-0 bg-[radial-gradient(35%_35%_at_100%_0%,var(--color-pista-soft)_0%,transparent_70%)] opacity-40" />
       </m.div>
 
-      <div className="relative mx-auto flex h-full max-w-[1440px] flex-col items-center px-5 pb-10 pt-24 sm:px-8 lg:pb-0 lg:pt-[6.5rem]">
+      <div className="relative mx-auto flex h-full max-w-[1440px] flex-col items-center px-5 pb-10 pt-28 sm:px-8 lg:pb-0 lg:pt-[6.5rem]">
         {/* ── Poster headline ─────────────────────── */}
         <m.div style={{ y: titleY }} className="relative z-0 w-full text-center">
           <m.div style={{ x: titleMouseX, y: titleMouseY }}>
@@ -55,11 +55,13 @@ export default function Hero() {
                   aria-hidden
                   className="block whitespace-nowrap text-[26vw] lg:inline lg:text-[min(13.4vw,25svh)]"
                 >
+                  {/* Clip box padded by 0.15em (negative margin keeps the layout): Veneer's glyphs are taller than the
+                      0.86 line, and Safari clipped their tops. Letters start at 135% so they're fully hidden below it. */}
                   {word.split("").map((ch, i) => (
-                    <span key={i} className="inline-block overflow-hidden align-top">
+                    <span key={i} className="-my-[0.15em] inline-block overflow-hidden py-[0.15em] align-top">
                       <m.span
                         className="inline-block"
-                        initial={{ y: "102%" }}
+                        initial={{ y: "135%" }}
                         animate={{ y: 0 }}
                         transition={{ duration: 1.05, ease, delay: 0.3 + wi * 0.25 + i * 0.04 }}
                       >
@@ -78,7 +80,7 @@ export default function Hero() {
         {/* ── Hero product: one bowl, centred, overlapping the lower part of the headline ── */}
         <m.div
           style={{ scale: artScale, y: artY }}
-          className="relative z-10 -mt-[10%] w-full max-w-[28rem] flex-none lg:absolute lg:bottom-[5svh] lg:left-1/2 lg:mt-0 lg:w-[min(50vw,760px,78svh)] lg:max-w-none lg:-translate-x-1/2"
+          className="relative z-10 -mt-[10%] w-full max-w-[min(28rem,36svh)] flex-none lg:absolute lg:bottom-[5svh] lg:left-1/2 lg:mt-0 lg:w-[min(50vw,760px,78svh)] lg:max-w-none lg:-translate-x-1/2"
         >
           <HeroBowl mx={mouse.x} my={mouse.y} />
         </m.div>
@@ -95,7 +97,7 @@ export default function Hero() {
             <p className="mx-auto mt-3 max-w-sm text-[0.95rem] leading-relaxed text-ink lg:mx-0">
               Crunchy, flavourful and made for those moments when you just want something good to snack on.
             </p>
-            <div className="mt-5 flex flex-wrap justify-center gap-2 lg:justify-start">
+            <div className="mt-5 flex justify-center gap-2 max-sm:[&_.btn]:h-11 max-sm:[&_.btn]:px-4 max-sm:[&_.btn]:text-[0.9rem] lg:justify-start">
               <Link href="/shop" className="group btn btn-primary pr-2">
                 Shop the Crunch
                 <span className="grid size-9 place-items-center rounded-full bg-gold-soft text-forest transition-transform duration-500 ease-premium group-hover:-rotate-45">

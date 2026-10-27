@@ -9,7 +9,7 @@ import { account, useAccount, validateCheckout, type Address, type CheckoutForm 
 import { placeOrder } from "@/app/checkout/actions";
 import { cart, countItems, useCart } from "@/lib/cart";
 import { checkoutSettings, flavours, formatINR, indianStates, packById, tones } from "@/lib/content";
-import pouch from "@/public/images/hero/makhana-pouch.webp";
+import { productImage } from "@/lib/product-images";
 
 const bySlug = Object.fromEntries(flavours.map((f) => [f.slug, f]));
 const fields: (keyof Form)[] = ["name", "phone", "email", "line", "city", "state", "pincode"];
@@ -252,7 +252,7 @@ export default function CheckoutForm() {
             return (
               <li key={`${l.slug}:${l.pack}`} className="flex items-center gap-3 py-3">
                 <span className={`relative grid size-14 shrink-0 place-items-center rounded-xl ${tones[f.tone].soft}`}>
-                  <Image src={pouch} alt="" sizes="2.5rem" className="h-auto w-9" />
+                  <Image src={productImage(f.slug)} alt="" sizes="2.5rem" className="h-12 w-9 object-contain" />
                   <span className="absolute -right-1.5 -top-1.5 grid size-5 place-items-center rounded-full bg-forest text-[0.65rem] font-bold text-cream">
                     {l.qty}
                   </span>

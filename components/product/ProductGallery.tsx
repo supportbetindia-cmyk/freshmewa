@@ -6,22 +6,33 @@ import { AnimatePresence, m } from "framer-motion";
 import { tones, type Flavour } from "@/lib/content";
 import { ease } from "@/lib/motion";
 import MakhanaPouch from "../MakhanaPouch";
-import spicedBowl from "@/public/images/hero/makhana-bowl-spiced.webp";
-import plainBowl from "@/public/images/hero/makhana-bowl.webp";
-import loose from "@/public/images/hero/makhana-1.webp";
-import pouchThumb from "@/public/images/hero/makhana-pouch.webp";
+import pudinaBowl from "@/public/images/products/pudina-bowl.webp";
+import pudinaTop from "@/public/images/products/pudina-top.webp";
+import pudinaClose from "@/public/images/products/pudina-close.webp";
+import pepperBowl from "@/public/images/products/salt-pepper-bowl.webp";
+import pepperTop from "@/public/images/products/salt-pepper-top.webp";
+import pepperClose from "@/public/images/products/salt-pepper-close.webp";
+import periBowl from "@/public/images/products/peri-peri-bowl.webp";
+import periTop from "@/public/images/products/peri-peri-top.webp";
+import periClose from "@/public/images/products/peri-peri-close.webp";
+import { productImage } from "@/lib/product-images";
 
-// ponytail: shared lifestyle shots for every flavour; swap in per-flavour photography when it exists.
-const shots: { src: StaticImageData; alt: string; width: string }[] = [
-  { src: spicedBowl, alt: "Bowl of seasoned roasted makhana", width: "w-[78%]" },
-  { src: plainBowl, alt: "Bowl of roasted makhana, top view", width: "w-[64%]" },
-  { src: loose, alt: "A single roasted makhana up close", width: "w-[46%]" },
-];
+const flavourShots: Record<string, [StaticImageData, StaticImageData, StaticImageData]> = {
+  pudina: [pudinaBowl, pudinaTop, pudinaClose],
+  "salt-pepper": [pepperBowl, pepperTop, pepperClose],
+  "peri-peri": [periBowl, periTop, periClose],
+};
 
-/** Main stage (pouch first, then lifestyle shots) with crossfading slides and thumbnails. */
+/** Main stage (jar first, then lifestyle shots) with crossfading slides and thumbnails. */
 export default function ProductGallery({ flavour: f }: { flavour: Flavour }) {
   const [active, setActive] = useState(0);
   const t = tones[f.tone];
+  const [bowl, top, close] = flavourShots[f.slug];
+  const shots = [
+    { src: bowl, alt: `Bowl of ${f.name}`, width: "w-[82%]" },
+    { src: top, alt: `${f.name} bowl viewed from above`, width: "w-[78%]" },
+    { src: close, alt: `${f.name} seasoning and crunchy interior close-up`, width: "w-[72%]" },
+  ];
   const wordSize = `${Math.min(34, 96 / (f.short.length * 0.39))}cqw`;
 
   return (
@@ -61,18 +72,18 @@ export default function ProductGallery({ flavour: f }: { flavour: Flavour }) {
       </div>
 
       <div className="mt-3 grid grid-cols-4 gap-2 sm:gap-3" role="group" aria-label="Product images">
-        {[{ src: pouchThumb, alt: `${f.name} pack` }, ...shots].map((s, i) => (
+        {[{ src: productImage(f.slug), alt: `${f.name} jar` }, ...shots].map((s, i) => (
           <button
             key={i}
             type="button"
             onClick={() => setActive(i)}
             aria-label={`Show image ${i + 1}: ${s.alt}`}
             aria-pressed={active === i}
-            className={`grid aspect-square place-items-center rounded-2xl p-2 ring-2 transition-[box-shadow,background-color] duration-300 ${
+            className={`relative aspect-square rounded-2xl ring-2 transition-[box-shadow,background-color] duration-300 ${
               active === i ? `${t.soft} ring-forest` : "bg-white/60 ring-transparent hover:ring-forest/20"
             }`}
           >
-            <Image src={s.src} alt="" sizes="6rem" className="h-full w-auto object-contain" />
+            <Image src={s.src} alt="" fill sizes="(min-width: 1024px) 10vw, 22vw" className="object-contain p-2" />
           </button>
         ))}
       </div>

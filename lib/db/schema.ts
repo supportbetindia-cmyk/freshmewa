@@ -2,7 +2,7 @@ import { index, integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-o
 import { orderStatuses, type Address, type OrderItem } from "../orders";
 
 
-/** Same shape as `Order` in lib/orders.ts, so the admin and the account page agree. Amounts in whole rupees. */
+
 export const orders = pgTable("orders", {
   id: text().primaryKey(), // "FM-…" from newOrderId()
   userId: uuid("user_id"), // neon_auth.user.id of the customer; null = placed before login was required
@@ -19,7 +19,7 @@ export const orders = pgTable("orders", {
   payment: text({ enum: ["cod"] }).notNull().default("cod"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [
-  index("orders_user_id_idx").on(t.userId), // "My Orders" looks up orders by customer — this makes it instant
+  index("orders_user_id_idx").on(t.userId), 
 ]);
 
 
@@ -34,3 +34,15 @@ export const posts = pgTable("posts", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
 });
+
+
+
+export const addresses = pgTable("addresses", {
+  id: uuid().primaryKey().defaultRandom(), // Postgres makes a random id
+  userId: uuid("user_id").notNull(), // neon_auth.user.id — whose address this is
+  address: jsonb().$type<Omit<Address, "id">>().notNull(),
+  defaultedAt: timestamp("defaulted_at", { withTimezone: true }), // when "Make default" was last clicked; newest = the default
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index("addresses_user_id_idx").on(t.userId),
+]);
