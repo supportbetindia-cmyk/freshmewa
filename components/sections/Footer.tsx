@@ -99,7 +99,8 @@ export default function Footer() {
         </div>
 
         <div className="relative mx-auto mt-10 flex max-w-7xl flex-col gap-2 border-t border-cream/10 px-5 py-5 text-xs text-cream/50 sm:flex-row sm:justify-between sm:px-8">
-          <p>© {new Date().getFullYear()} Fresh Mewa. All rights reserved. Desgine By Digivanta</p>
+          <p>© {new Date().getFullYear()} Fresh Mewa. All rights reserved. </p>
+          <a href="https://www.digivanta.co/">Design By Digivanta</a>
         </div>
 
       </div>
