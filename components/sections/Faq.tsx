@@ -22,7 +22,7 @@ export default function Faq({
     mainEntity: [...schemaExtra, ...items].map(({ q, a }) => ({
       "@type": "Question",
       name: q,
-      acceptedAnswer: { "@type": "Answer", text: a.join(" ") },
+      acceptedAnswer: { "@type": "Answer", text: a.join("\n\n") },
     })),
   };
 

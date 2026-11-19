@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Comic_Neue, Fraunces, Manrope, Tiro_Devanagari_Hindi } from "next/font/google";
 import localFont from "next/font/local";
 import { domAnimation, LazyMotion, MotionConfig } from "framer-motion";
@@ -53,6 +54,17 @@ export const metadata: Metadata = {
   title: "Fresh Mewa — Roasted Makhana, Made for Every Day",
   description:
     "Crunchy, flavourful roasted makhana in Pudina, Salt & Pepper and Peri Peri. Made for chai breaks, desk snacking, travel and movie nights.",
+  verification: {
+    google: "T8Z6lB0rWeHbSKEmokhdtblt-psIQsMAi0fNawzgypo",
+  },
+};
+
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Best Fresh Mewa",
+  "alternateName": ["Fresh Mewa"],
+  "url": "https://www.bestfreshmewa.com/",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -61,7 +73,25 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${fraunces.variable} ${manrope.variable} ${tiro.variable} ${veneer.variable} ${veneerExtras.variable} ${comicNeue.variable} antialiased`}
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(websiteSchema).replace(/</g, "\\u003c"),
+          }}
+        />
+      </head>
       <body>
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtm.js?id=GTM-57ZBCQDP"
+          strategy="afterInteractive"
+        />
+        <Script id="freshmewa-analytics" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());`}
+        </Script>
         {/* LazyMotion + `m` components: only the animation/hover/in-view features ship. `strict` blocks full `motion.*` imports. */}
         <LazyMotion features={domAnimation} strict>
           <MotionConfig reducedMotion="user">

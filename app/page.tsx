@@ -10,7 +10,7 @@ import Philosophy from "@/components/sections/Philosophy";
 import MakhanaGuide from "@/components/sections/MakhanaGuide";
 import Faq from "@/components/sections/Faq";
 import FinalCta from "@/components/sections/FinalCta";
-import { education, faqs, flavours, tones } from "@/lib/content";
+import { faqs, flavours, tones } from "@/lib/content";
 
 export default function Home() {
   return (
@@ -33,7 +33,6 @@ export default function Home() {
             </>
           }
           items={faqs}
-          schemaExtra={education}
         />
         <FinalCta title="Your Snack Break Just Got Crunchier." cta="Shop Fresh Mewa" href="/shop">
           <ul className="mt-5 flex flex-wrap gap-2">
