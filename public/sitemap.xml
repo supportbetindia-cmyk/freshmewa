@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+    <!-- Homepage -->
+    <url>
+        <loc>https://www.bestfreshmewa.com/</loc>
+    </url>
+
+    <!-- Main Pages -->
+    <url>
+        <loc>https://www.bestfreshmewa.com/shop</loc>
+    </url>
+
+    <url>
+        <loc>https://www.bestfreshmewa.com/our-story</loc>
+    </url>
+
+    <url>
+        <loc>https://www.bestfreshmewa.com/shipping-returns</loc>
+    </url>
+
+    <!-- Product / Flavour Pages -->
+    <url>
+        <loc>https://www.bestfreshmewa.com/shop/pudina</loc>
+    </url>
+
+    <url>
+        <loc>https://www.bestfreshmewa.com/shop/salt-pepper</loc>
+    </url>
+
+    <url>
+        <loc>https://www.bestfreshmewa.com/shop/peri-peri</loc>
+    </url>
+
+</urlset>

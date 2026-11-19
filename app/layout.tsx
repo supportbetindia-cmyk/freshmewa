@@ -67,6 +67,24 @@ const websiteSchema = {
   "url": "https://www.bestfreshmewa.com/",
 };
 
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Fresh Mewa",
+  "alternateName": "Fresh Mewa",
+  "url": "https://www.bestfreshmewa.com/",
+  "logo": "https://www.bestfreshmewa.com/_next/static/media/logo.05ceddf3.webp",
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "9999918877",
+    "contactType": "sales",
+    "contactOption": "TollFree",
+    "areaServed": "IN",
+    "availableLanguage": ["en", "Hindi"],
+  },
+  "sameAs": "https://www.instagram.com/fresh.mewa",
+};
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
@@ -78,6 +96,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(websiteSchema).replace(/</g, "\\u003c"),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationSchema).replace(/</g, "\\u003c"),
           }}
         />
       </head>
