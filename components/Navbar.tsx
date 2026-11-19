@@ -93,9 +93,9 @@ export default function Navbar() {
             <Menu className="size-5" strokeWidth={1.6} />
           </button>
 
-          <a href="/" aria-label="Fresh Mewa home">
-            <Image src={logo} alt="Fresh Mewa" sizes="100px" loading="eager" className="h-auto w-25" />
-          </a>
+          <Link href="/" aria-label="Fresh Mewa home">
+            <img src={logo.src} alt="Fresh Mewa" loading="eager" className="h-auto w-24" />
+          </Link>
 
           <div className="flex items-center gap-0.5 justify-self-end">
             <Link href="/account" aria-label="My account" className={iconBtn}>
