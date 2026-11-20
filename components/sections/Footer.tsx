@@ -1,6 +1,6 @@
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
-import { navLinks } from "@/lib/content";
+import { navLinks, routes } from "@/lib/content";
 import { Ornament } from "../ui/Ornaments";
 import m1 from "@/public/images/hero/makhana-1.webp";
 import m3 from "@/public/images/hero/makhana-3.webp";
@@ -92,7 +92,10 @@ export default function Footer() {
                 </li>
               ))}
               <li>
-                <Link href="/shipping-returns" className="transition-colors hover:text-gold-soft">Shipping & Returns</Link>
+                <Link href={routes.shipping} className="transition-colors hover:text-gold-soft">Shipping & Returns</Link>
+              </li>
+              <li>
+                <a href="https://www.instagram.com/fresh.mewa" target="_blank" rel="noopener" className="transition-colors hover:text-gold-soft">Instagram</a>
               </li>
             </ul>
           </nav>

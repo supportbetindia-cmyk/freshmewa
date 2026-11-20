@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
 import { useAccount } from "@/lib/account";
-import { formatINR } from "@/lib/content";
+import { formatINR, routes } from "@/lib/content";
 
 export default function OrderConfirmation({ id }: { id: string }) {
   const { orders, ready } = useAccount();
@@ -47,7 +47,7 @@ export default function OrderConfirmation({ id }: { id: string }) {
         <Link href="/account" className="btn btn-primary">
           View my orders
         </Link>
-        <Link href="/shop" className="btn btn-outline text-forest">
+        <Link href={routes.shop} className="btn btn-outline text-forest">
           Keep shopping
         </Link>
       </div>

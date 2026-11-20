@@ -2,14 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, ChevronRight, Clock3, PackageCheck, RotateCcw, Truck } from "lucide-react";
 import Reveal from "@/components/ui/Reveal";
-import { checkoutSettings, formatINR } from "@/lib/content";
+import { checkoutSettings, formatINR, pageMeta, routes, seo } from "@/lib/content";
 
-// Keep this draft out of search results until the merchant confirms the policy below.
-export const metadata: Metadata = {
-  title: "Shipping & Returns — Fresh Mewa",
-  description: "Delivery charges, dispatch information and returns for Fresh Mewa orders.",
-  robots: { index: false, follow: true },
-};
+// Indexable now (SEO report). Several values below still say "To be confirmed" — finish them before promoting this page.
+export const metadata: Metadata = pageMeta(seo.shipping, routes.shipping);
 
 export default function ShippingReturnsPage() {
   return (

@@ -1,5 +1,6 @@
 "use client";
 
+import { routes } from "@/lib/content";
 import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -88,13 +89,13 @@ export default function Hero() {
               Crunchy, flavourful and made for those moments when you just want something good to snack on.
             </p>
             <div className="mt-5 flex justify-center gap-2 max-sm:[&_.btn]:h-11 max-sm:[&_.btn]:px-4 max-sm:[&_.btn]:text-[0.9rem] lg:justify-start">
-              <Link href="/shop" className="group btn btn-primary pr-2">
+              <Link href={routes.shop} className="group btn btn-primary pr-2">
                 Shop the Crunch
                 <span className="grid size-9 place-items-center rounded-full bg-gold-soft text-forest transition-transform duration-500 ease-premium group-hover:-rotate-45">
                   <ArrowRight className="size-4" />
                 </span>
               </Link>
-              <Link href="/our-story" className="btn btn-outline text-forest hover:bg-[#1e3418] hover:text-white">
+              <Link href={routes.story} className="btn btn-outline text-forest hover:bg-[#1e3418] hover:text-white">
                 Meet Fresh Mewa
               </Link>
             </div>

@@ -8,6 +8,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/sections/Footer";
 import "./globals.css";
 import HideOnAdmin from "@/components/HideOnAdmin";
+import { siteUrl } from "@/lib/content";
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
@@ -51,9 +52,12 @@ const veneerExtras = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl), // makes canonical + share URLs absolute (https://www.bestfreshmewa.com/…)
   title: "Fresh Mewa — Roasted Makhana, Made for Every Day",
   description:
     "Crunchy, flavourful roasted makhana in Pudina, Salt & Pepper and Peri Peri. Made for chai breaks, desk snacking, travel and movie nights.",
+  openGraph: { siteName: "Fresh Mewa", locale: "en_IN", type: "website" },
+  twitter: { card: "summary_large_image" },
   verification: {
     google: "T8Z6lB0rWeHbSKEmokhdtblt-psIQsMAi0fNawzgypo",
   },
@@ -73,7 +77,7 @@ const organizationSchema = {
   "name": "Fresh Mewa",
   "alternateName": "Fresh Mewa",
   "url": "https://www.bestfreshmewa.com/",
-  "logo": "https://www.bestfreshmewa.com/_next/static/media/logo.05ceddf3.webp",
+  "logo": "https://www.bestfreshmewa.com/images/logo.webp", // public/ file: fixed URL (the _next/static name changes per build)
   "contactPoint": {
     "@type": "ContactPoint",
     "telephone": "9999918877",

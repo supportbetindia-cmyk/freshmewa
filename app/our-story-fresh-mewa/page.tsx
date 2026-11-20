@@ -6,7 +6,7 @@ import { ChapterNav, ReadingProgress } from "@/components/story/StoryNav";
 import Faq from "@/components/sections/Faq";
 import FinalCta from "@/components/sections/FinalCta";
 import Reveal from "@/components/ui/Reveal";
-import { flavours, storyFaqs, tones } from "@/lib/content";
+import { flavours, pageMeta, routes, seo, storyFaqs, tones } from "@/lib/content";
 import m1 from "@/public/images/hero/makhana-1.webp";
 import m5 from "@/public/images/hero/makhana-5.webp";
 import spicedBowl from "@/public/images/hero/makhana-bowl-spiced.webp";
@@ -14,11 +14,7 @@ import MakhanaPouch from "@/components/MakhanaPouch";
 
 const letterColor = ["text-forest", "text-chilli", "text-gold", "text-mint", "text-forest", "text-chilli", "text-mint", "text-gold", "text-forest"];
 
-export const metadata: Metadata = {
-  title: "Our Story — Fresh Mewa",
-  description:
-    "We snack. A lot. Why Fresh Mewa started with roasted makhana, made without added oil and preservatives, for the way people actually snack.",
-};
+export const metadata: Metadata = pageMeta(seo.story, routes.story);
 
 export default function OurStoryPage() {
   return (
@@ -107,7 +103,7 @@ export default function OurStoryPage() {
 
         <Faq title="A Few Things You Might Be Wondering" items={storyFaqs} />
 
-        <FinalCta title="So, What Are You Snacking On Today?" cta="Explore Fresh Mewa" href="/shop">
+        <FinalCta title="So, What Are You Snacking On Today?" cta="Explore Fresh Mewa" href={routes.shop}>
           <ul className="mt-5 flex flex-wrap gap-2">
             {flavours.map((f) => (
               <li

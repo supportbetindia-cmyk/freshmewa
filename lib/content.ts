@@ -1,10 +1,63 @@
 // Homepage copy + product data. Kept verbatim and structured so it can move to a CMS later.
 
+export const siteUrl = "https://www.bestfreshmewa.com";
+
+/** Public URLs (names from the SEO report). Old ones 301-redirect here — see next.config.ts. */
+export const routes = {
+  shop: "/shop-dry-fruits",
+  story: "/our-story-fresh-mewa",
+  shipping: "/shipping-returns-policy",
+} as const;
+/** Product page URL: /shop/pudina-makhana. The flavour slug itself (cart, orders) stays "pudina". */
+export const productPath = (slug: string) => `/shop/${slug}-makhana`;
+
+/** Page titles + descriptions from the SEO report ("Url Mapping"), verbatim. */
+export const seo = {
+  home: {
+    title: "Fresh Mewa | Roasted Makhana & Flavoured Fox Nuts",
+    description: "Buy roasted makhana online at Fresh Mewa. Explore crunchy fox nuts in Pudina, Salt & Pepper and Peri Peri flavours perfect for chai breaks, work and travel.",
+  },
+  shop: {
+    title: "Buy Flavoured Roasted Makhana Online | Fresh Mewa",
+    description: "Give your snack time a flavour upgrade! Shop crunchy roasted makhana in three delicious flavours at Fresh Mewa. Choose yours and order online.",
+  },
+  story: {
+    title: "Our Story – Flavoured Roasted Makhana | Fresh Mewa",
+    description: "Every great snack has a story! Explore how Fresh Mewa started its journey to make roasted makhana more exciting with bold flavours and no added oil or preservatives.",
+  },
+  shipping: {
+    title: "Shipping & Returns Policy | Fresh Mewa",
+    description: "Know more about Fresh Mewa online order delivery, shipping costs, dispatch information, return guidelines and refund policies before placing an order.",
+  },
+  products: {
+    "peri-peri": {
+      title: "Peri Peri Makhana | Spicy Roasted Fox Nuts – Fresh Mewa",
+      description: "Shop Fresh Mewa Peri Peri Makhana, a crunchy roasted fox nuts snack coated with bold peri peri spices. Perfect for anytime snacking and flavourful cravings.",
+    },
+    "salt-pepper": {
+      title: "Salt & Pepper Makhana | Roasted Fox Nuts – Fresh Mewa",
+      description: "Discover Fresh Mewa Salt & Pepper Makhana, featuring crunchy roasted fox nuts seasoned with the perfect blend of salt and pepper for a flavourful snack.",
+    },
+    pudina: {
+      title: "Pudina Makhana | Mint Roasted Fox Nuts | Fresh Mewa",
+      description: "Enjoy crunchy roasted Pudina Makhana by Fresh Mewa, seasoned with mint and savoury spices. A refreshing fox nuts snack for everyday cravings and snack breaks.",
+    },
+  } as Record<string, { title: string; description: string }>,
+};
+
+/** Title, description, canonical URL and social-share tags for one page. The share image is app/opengraph-image.jpg. */
+export const pageMeta = (s: { title: string; description: string }, path: string) => ({
+  ...s,
+  alternates: { canonical: path },
+  // images: a page's own openGraph replaces the inherited one, so name the share image explicitly
+  openGraph: { ...s, url: path, siteName: "Fresh Mewa", locale: "en_IN", type: "website" as const, images: "/opengraph-image.jpg" },
+});
+
 export const navLinks = [
-  { label: "Shop", href: "/shop" },
+  { label: "Shop", href: routes.shop },
   { label: "Flavours", href: "/#flavours" },
   { label: "Why Fresh Mewa", href: "/#why" },
-  { label: "Our Story", href: "/our-story" },
+  { label: "Our Story", href: routes.story },
   { label: "FAQs", href: "/#faq" },
 ]
 

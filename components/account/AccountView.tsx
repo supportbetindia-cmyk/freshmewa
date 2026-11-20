@@ -6,7 +6,7 @@ import { useLenis } from "lenis/react";
 import { Award, ChevronRight, ClipboardList, ListOrdered, LogOut, MapPin, Plus, Trash2 } from "lucide-react";
 import { account, formatAddress, useAccount, type Address } from "@/lib/account";
 import AddressDialog from "./AddressDialog";
-import { formatINR } from "@/lib/content";
+import { formatINR, routes } from "@/lib/content";
 import type { MyOrder } from "@/lib/db/orders";
 import { deleteAddress, logOut, makeDefaultAddress } from "@/app/account/actions";
 
@@ -217,7 +217,7 @@ function Empty({ title, text, action }: { title: string; text: string; action?: 
       <p className="mt-5 text-2xl font-bold text-forest">{title}</p>
       <p className="mt-1 text-lg text-ink-muted">{text}</p>
       {action ?? (
-        <Link href="/shop#range" className="btn btn-primary mt-6">
+        <Link href={`${routes.shop}#range`} className="btn btn-primary mt-6">
           Start shopping
         </Link>
       )}

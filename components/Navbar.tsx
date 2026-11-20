@@ -98,7 +98,7 @@ export default function Navbar() {
           </Link>
 
           <div className="flex items-center gap-0.5 justify-self-end">
-            <Link href="/account" aria-label="My account" className={iconBtn}>
+            <Link href="/account" rel="nofollow" prefetch={false} aria-label="My account" className={iconBtn}>
               <User className="size-[1.15rem]" strokeWidth={1.6} />
             </Link>
             <button type="button" onClick={cart.open} aria-label={`Open cart, ${cartCount} items`} className={iconBtn}>
@@ -179,7 +179,7 @@ export default function Navbar() {
               </ul>
 
               <div className="mt-auto flex gap-3 text-sm font-medium text-forest">
-                <Link href="/account" onClick={() => setOpen(false)} className="flex flex-1 items-center justify-center gap-2 rounded-full border border-forest/15 py-3">
+                <Link href="/account" rel="nofollow" prefetch={false} onClick={() => setOpen(false)} className="flex flex-1 items-center justify-center gap-2 rounded-full border border-forest/15 py-3">
                   <User className="size-4" strokeWidth={1.6} /> Account
                 </Link>
                 <Link href="/wishlist" onClick={() => setOpen(false)} className="flex flex-1 items-center justify-center gap-2 rounded-full border border-forest/15 py-3">

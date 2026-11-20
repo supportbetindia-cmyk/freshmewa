@@ -1,5 +1,5 @@
 import { Archive, ArrowRight, ArrowUpRight, ListChecks, Package, Sparkles, Truck } from "lucide-react";
-import { flavours, orderInfo, shopFlavours, tones } from "@/lib/content";
+import { flavours, orderInfo, productPath, shopFlavours, tones } from "@/lib/content";
 import FlavourCard from "../FlavourCard";
 import PouchTrio from "../PouchTrio";
 import Reveal from "../ui/Reveal";
@@ -89,7 +89,7 @@ export function Collection() {
               tagline={shopFlavours[f.slug].tagline}
               description={shopFlavours[f.slug].description}
               cta="View Product"
-              href={`/shop/${f.slug}`}
+              href={productPath(f.slug)}
               shop
               className="w-[86%] shrink-0 snap-center sm:w-auto"
             />

@@ -10,7 +10,10 @@ import Philosophy from "@/components/sections/Philosophy";
 import MakhanaGuide from "@/components/sections/MakhanaGuide";
 import Faq from "@/components/sections/Faq";
 import FinalCta from "@/components/sections/FinalCta";
-import { faqs, flavours, tones } from "@/lib/content";
+import type { Metadata } from "next";
+import { faqs, flavours, pageMeta, routes, seo, tones } from "@/lib/content";
+
+export const metadata: Metadata = pageMeta(seo.home, "/");
 
 export default function Home() {
   return (
@@ -34,7 +37,7 @@ export default function Home() {
           }
           items={faqs}
         />
-        <FinalCta title="Your Snack Break Just Got Crunchier." cta="Shop Fresh Mewa" href="/shop">
+        <FinalCta title="Your Snack Break Just Got Crunchier." cta="Shop Fresh Mewa" href={routes.shop}>
           <ul className="mt-5 flex flex-wrap gap-2">
             {flavours.map((f) => (
               <li

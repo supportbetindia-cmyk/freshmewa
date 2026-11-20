@@ -22,10 +22,10 @@ node lib/account.test.ts   # checkout validation / order helpers check
 | Route | What it is |
 | --- | --- |
 | `/` | Homepage: hero, flavour ticker, intro, brand value, flavours, why Fresh Mewa, everyday moments, brand story, philosophy, "what is makhana", FAQ, final CTA, footer |
-| `/shop` | Shop: hero, start here, product range (Add to Cart / Buy Now), flavour guide, before you order, shopping FAQ, final CTA |
-| `/shop/[slug]` | Product page for `pudina`, `salt-pepper`, `peri-peri` (pre-rendered; any other slug → 404) |
-| `/our-story` | Brand story, told in 10 chapter cards + FAQ + final CTA |
-| `/shipping-returns` | Shipping and returns draft, linked from the footer and product buy boxes; excluded from indexing until policy details are confirmed |
+| `/shop-dry-fruits` | Shop: hero, start here, product range (Add to Cart / Buy Now), flavour guide, before you order, shopping FAQ, final CTA |
+| `/shop/[slug]` | Product pages `/shop/pudina-makhana`, `/shop/salt-pepper-makhana`, `/shop/peri-peri-makhana` (pre-rendered; URL = `productPath(slug)`; the flavour slug inside stays `pudina` etc.) |
+| `/our-story-fresh-mewa` | Brand story, told in 10 chapter cards + FAQ + final CTA |
+| `/shipping-returns-policy` | Shipping and returns, linked from the footer and product buy boxes. Indexed by Google now — some values still say "To be confirmed" |
 | `/login` | Customer login: **Continue with Google** or email → 6-digit code. `?next=/checkout` returns there after login |
 | `/checkout` | **Login required.** Contact → delivery address → payment (Cash on Delivery) with a sticky order summary |
 | `/checkout/success?order=…` | Order confirmation |
@@ -35,7 +35,7 @@ node lib/account.test.ts   # checkout validation / order helpers check
 
 Navbar and Footer are rendered once in `app/layout.tsx` — pages must not render their own.
 
-### Our Story page (`app/our-story/page.tsx`)
+### Our Story page (`app/our-story-fresh-mewa/page.tsx`)
 
 Deliberately more playful than the rest of the site, so a long read stays fun:
 
@@ -80,10 +80,12 @@ Every page is a folder in `app/` (folder path = URL). Code that only runs on the
 | `page.tsx` | `/` | Homepage (section order) |
 | `fonts/` | — | Subset WOFF2 Veneer fonts the site actually loads |
 | `icon.png`, `apple-icon.png`, `favicon.ico` | — | Browser/phone icons |
-| `shop/page.tsx` | `/shop` | Shop page |
-| `shop/[slug]/page.tsx` | `/shop/pudina` … | Product page (`[slug]` = the flavour in the URL) |
-| `our-story/` | `/our-story` | Brand story page |
-| `shipping-returns/` | `/shipping-returns` | Shipping & returns policy |
+| `shop-dry-fruits/page.tsx` | `/shop-dry-fruits` | Shop page |
+| `shop/[slug]/page.tsx` | `/shop/pudina-makhana` … | Product page |
+| `our-story-fresh-mewa/` | `/our-story-fresh-mewa` | Brand story page |
+| `shipping-returns-policy/` | `/shipping-returns-policy` | Shipping & returns policy |
+| `robots.ts`, `sitemap.ts` | `/robots.txt`, `/sitemap.xml` | Generated (sitemap includes published blog posts) |
+| `opengraph-image.jpg` | — | Picture shown when a page is shared (WhatsApp, Facebook…) |
 | `checkout/page.tsx` | `/checkout` | Checkout page |
 | `checkout/actions.ts` | — | **`placeOrder` server action**: validates, prices and saves the order to the database |
 | `checkout/success/` | `/checkout/success` | Order confirmation |
@@ -211,6 +213,17 @@ Flow: product/shop card → **Add to Cart / Buy Now** → cart drawer → **Chec
 - [ ] Phone OTP: needs an SMS provider + DLT registration, and Neon Auth has no phone-first sign-up
 - [ ] Online payments (e.g. Razorpay) + order status updates
 - [ ] Set the delivery fee policy
+
+## SEO
+
+From the SEO report ("On Page Recommendation Best Fresh Mewa"):
+
+- **URLs, titles, descriptions** live in one place: `lib/content.ts` → `siteUrl`, `routes`, `productPath`, `seo`. Pages use `pageMeta(seo.x, path)` = title + description + canonical + share tags.
+- **Old URLs** (`/shop`, `/shop/pudina`, `/our-story`, `/shipping-returns` …) permanently redirect to the new ones (`next.config.ts` → `redirects`). Change a URL in `routes` → also add a redirect for the old one.
+- **robots.txt / sitemap.xml** are generated (`app/robots.ts`, `app/sitemap.ts`); private pages (`/account`, `/checkout`, `/login`, `/admin`) are disallowed. Don't add files with those names to `public/` (they'd clash).
+- **Schema (JSON-LD):** WebSite + Organization (layout), Product (product pages), FAQPage (FAQs), BlogPosting (posts).
+- **AI assistants:** `public/llms.txt`.
+- **Share image:** `app/opengraph-image.jpg` (1200×630).
 
 ## Deploying (Hostinger)
 

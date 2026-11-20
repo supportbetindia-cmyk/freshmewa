@@ -1,3 +1,4 @@
+import { routes } from "@/lib/content";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
@@ -16,7 +17,7 @@ export default async function CheckoutPage() {
     <main className="pb-16 pt-24 lg:pt-28">
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
         <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm text-ink-muted">
-          <Link href="/shop" className="hover:text-forest">
+          <Link href={routes.shop} className="hover:text-forest">
             Shop
           </Link>
           <ChevronRight className="size-3.5" />

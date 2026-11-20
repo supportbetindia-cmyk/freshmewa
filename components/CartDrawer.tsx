@@ -5,7 +5,7 @@ import Image from "next/image";
 import { AnimatePresence, m } from "framer-motion";
 import { Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import { cart, countItems, useCart } from "@/lib/cart";
-import { flavours, formatINR, packById, tones } from "@/lib/content";
+import { flavours, formatINR, packById, routes, tones } from "@/lib/content";
 import { ease } from "@/lib/motion";
 import { productImage } from "@/lib/product-images";
 
@@ -65,7 +65,7 @@ export default function CartDrawer() {
                   <ShoppingBag className="size-7" strokeWidth={1.5} />
                 </span>
                 <p className="font-display text-2xl italic text-forest">Your snack drawer is empty.</p>
-                <Link href="/shop#range" onClick={cart.close} className="btn btn-primary">
+                <Link href={`${routes.shop}#range`} onClick={cart.close} className="btn btn-primary">
                   Browse Makhana
                 </Link>
               </div>

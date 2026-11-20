@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Minus, Package, Plus, Sprout, Truck } from "lucide-react";
-import { checkoutSettings, formatINR, packs, productDetails, tones, type Flavour } from "@/lib/content";
+import { checkoutSettings, type Flavour, formatINR, packs, productDetails, routes, tones } from "@/lib/content";
 import CartButtons from "../CartButtons";
 
 /** Pack size + quantity selection, live price, Add to Cart / Buy Now. */
@@ -109,7 +109,7 @@ export default function BuyBox({ flavour: f }: { flavour: Flavour }) {
       <div className="mt-4">
         <CartButtons slug={f.slug} name={f.name} pack={packId} qty={qty} large />
       </div>
-      <Link href="/shipping-returns" className="mt-3 inline-block text-xs text-ink-muted underline decoration-forest/25 underline-offset-4 hover:text-forest">
+      <Link href={routes.shipping} className="mt-3 inline-block text-xs text-ink-muted underline decoration-forest/25 underline-offset-4 hover:text-forest">
         Shipping & returns details
       </Link>
     </div>

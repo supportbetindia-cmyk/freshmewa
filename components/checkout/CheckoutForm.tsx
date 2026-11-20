@@ -8,7 +8,7 @@ import { Banknote, CreditCard, Lock, MapPin, ShoppingBag } from "lucide-react";
 import { account, useAccount, validateCheckout, type Address, type CheckoutForm as Form } from "@/lib/account";
 import { placeOrder } from "@/app/checkout/actions";
 import { cart, countItems, useCart } from "@/lib/cart";
-import { checkoutSettings, flavours, formatINR, indianStates, packById, tones } from "@/lib/content";
+import { checkoutSettings, flavours, formatINR, indianStates, packById, routes, tones } from "@/lib/content";
 import { productImage } from "@/lib/product-images";
 
 const bySlug = Object.fromEntries(flavours.map((f) => [f.slug, f]));
@@ -99,7 +99,7 @@ export default function CheckoutForm() {
           <ShoppingBag className="size-7" strokeWidth={1.5} />
         </span>
         <p className="font-display text-2xl italic text-forest">Your cart is empty.</p>
-        <Link href="/shop#range" className="btn btn-primary">
+        <Link href={`${routes.shop}#range`} className="btn btn-primary">
           Browse Makhana
         </Link>
       </div>

@@ -1,4 +1,4 @@
-import { flavours, shopFlavours } from "@/lib/content";
+import { flavours, productPath, shopFlavours } from "@/lib/content";
 import FlavourCard from "../FlavourCard";
 import Reveal from "../ui/Reveal";
 
@@ -27,7 +27,7 @@ export default function Flavours() {
             tagline={f.tagline}
             description={shopFlavours[f.slug].description}
             cta={f.cta}
-            href={`/shop/${f.slug}`}
+            href={productPath(f.slug)}
             showcase
             className="w-[82%] shrink-0 snap-center sm:w-[60%] lg:w-auto"
           />

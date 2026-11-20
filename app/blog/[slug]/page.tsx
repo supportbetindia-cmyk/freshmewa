@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import MakhanaPouch from "@/components/MakhanaPouch";
-import { flavours, formatDate, formatINR, packs } from "@/lib/content";
+import { flavours, formatDate, formatINR, packs, productPath, routes } from "@/lib/content";
 import { getPublishedPost } from "@/lib/db/posts";
 
 /** generateMetadata and the page both need the post — cache() makes that one database query, not two. */
@@ -32,6 +32,7 @@ export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): P
   if (!post) return {};
   return {
     title: `${post.title} — Fresh Mewa`,
+    alternates: { canonical: `/blog/${post.slug}` },
     description: post.excerpt || undefined,
     openGraph: { type: "article", title: post.title, description: post.excerpt || undefined, publishedTime: post.publishedAt!.toISOString() },
   };
@@ -89,7 +90,7 @@ export default async function BlogPost({ params }: PageProps<"/blog/[slug]">) {
           <ul className="mt-3 space-y-1">
             {flavours.map((f) => (
               <li key={f.slug}>
-                <Link href={`/shop/${f.slug}`} className="flex items-center gap-3 rounded-2xl p-2 hover:bg-cream-deep/50">
+                <Link href={productPath(f.slug)} className="flex items-center gap-3 rounded-2xl p-2 hover:bg-cream-deep/50">
                   <div className="w-12 shrink-0"><MakhanaPouch flavour={f} sizes="3rem" /></div>
                   <span>
                     <span className="block font-semibold leading-tight text-forest">{f.name}</span>
@@ -99,7 +100,7 @@ export default async function BlogPost({ params }: PageProps<"/blog/[slug]">) {
               </li>
             ))}
           </ul>
-          <Link href="/shop" className="btn btn-primary mt-4 w-full">Shop now</Link>
+          <Link href={routes.shop} className="btn btn-primary mt-4 w-full">Shop now</Link>
         </div>
       </aside>
     </main>

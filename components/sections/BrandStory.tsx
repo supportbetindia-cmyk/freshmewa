@@ -1,3 +1,4 @@
+import { routes } from "@/lib/content";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
@@ -65,7 +66,7 @@ export default function BrandStory() {
           </Reveal>
           <Reveal>
             <Link
-              href="/our-story"
+              href={routes.story}
               className="group mt-2 inline-flex items-center gap-3 rounded-full border-[3px] border-forest px-6 py-2.5 font-hand text-xl font-bold text-forest transition-colors duration-300 hover:bg-forest hover:text-cream"
             >
               Short story looong of why we exist

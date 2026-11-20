@@ -3,13 +3,9 @@ import Marquee from "@/components/sections/Marquee";
 import Faq from "@/components/sections/Faq";
 import FinalCta from "@/components/sections/FinalCta";
 import { BeforeYouOrder, Collection, FlavourGuide, ShopHero, ShopIntro } from "@/components/shop/ShopSections";
-import { shopFaqs } from "@/lib/content";
+import { pageMeta, routes, seo, shopFaqs } from "@/lib/content";
 
-export const metadata: Metadata = {
-  title: "Shop Fresh Mewa — Pudina, Salt & Pepper and Peri Peri Makhana",
-  description:
-    "Three flavours of roasted makhana. Pudina, Salt & Pepper or Peri Peri — choose what sounds right and make it yours.",
-};
+export const metadata: Metadata = pageMeta(seo.shop, routes.shop);
 
 export default function ShopPage() {
   return (

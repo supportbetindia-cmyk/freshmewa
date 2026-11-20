@@ -6,6 +6,7 @@ import { formatDate } from "@/lib/content";
 export const metadata: Metadata = {
   title: "Blog — Fresh Mewa",
   description: "Makhana recipes, snacking ideas and stories from the Fresh Mewa kitchen.",
+  alternates: { canonical: "/blog" },
 };
 
 

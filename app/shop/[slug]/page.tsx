@@ -6,30 +6,30 @@ import FlavourCard from "@/components/FlavourCard";
 import BuyBox from "@/components/product/BuyBox";
 import ProductGallery from "@/components/product/ProductGallery";
 import Reveal from "@/components/ui/Reveal";
-import { faqs, flavours, packs, productDetails, shopFlavours, tones } from "@/lib/content";
+import { productImage } from "@/lib/product-images";
+import { faqs, flavours, packs, productDetails, pageMeta, productPath, routes, seo, shopFlavours, siteUrl, tones } from "@/lib/content";
 
 const storage = faqs.find((f) => f.q === "How should I store roasted makhana?")!.a[0];
 
+/** URL "pudina-makhana" → flavour "pudina" (see productPath in lib/content.ts). */
+const byUrl = (urlSlug: string) => flavours.find((f) => productPath(f.slug) === `/shop/${urlSlug}`);
+
 export function generateStaticParams() {
-  return flavours.map((f) => ({ slug: f.slug }));
+  return flavours.map((f) => ({ slug: productPath(f.slug).split("/").pop()! }));
 }
 
 export const dynamicParams = false;
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  const { slug } = await params;
-  const f = flavours.find((x) => x.slug === slug);
+  const f = byUrl((await params).slug);
   if (!f) return {};
-  return {
-    title: `${f.name} — Fresh Mewa`,
-    description: `${f.tagline} ${shopFlavours[slug].description}`,
-  };
+  return pageMeta(seo.products[f.slug], productPath(f.slug));
 }
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const f = flavours.find((x) => x.slug === slug);
+  const f = byUrl((await params).slug);
   if (!f) notFound();
+  const slug = f.slug;
 
   const shop = shopFlavours[slug];
   const details = productDetails[slug];
@@ -39,6 +39,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     "@context": "https://schema.org",
     "@type": "Product",
     name: f.name,
+    image: siteUrl + productImage(slug).src,
     description: `${f.description} ${shop.description}`,
     brand: { "@type": "Brand", name: "Fresh Mewa" },
     offers: packs.map((p) => ({
@@ -46,7 +47,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       name: p.label,
       price: p.price,
       priceCurrency: "INR",
-      url: `/shop/${slug}`,
+      url: siteUrl + productPath(slug),
     })),
   };
 
@@ -62,7 +63,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         <section className="pb-12 pt-24 lg:pb-16 lg:pt-28">
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
             <nav aria-label="Breadcrumb" className="mb-4 flex items-center gap-1.5 text-sm text-ink-muted">
-              <Link href="/shop" className="hover:text-forest">
+              <Link href={routes.shop} className="hover:text-forest">
                 Shop
               </Link>
               <ChevronRight className="size-3.5" />
@@ -142,7 +143,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               </DetailCard>
               <DetailCard title="Shipping" delay={0.1}>
                 <p>Pricing, stock and delivery details are displayed at the time of purchase.</p>
-                <Link href="/shipping-returns" className="mt-3 inline-block font-semibold text-forest underline underline-offset-4">Read shipping & returns details</Link>
+                <Link href={routes.shipping} className="mt-3 inline-block font-semibold text-forest underline underline-offset-4">Read shipping & returns details</Link>
               </DetailCard>
             </div>
           </div>
@@ -168,7 +169,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                     tagline={shopFlavours[x.slug].tagline}
                     description={shopFlavours[x.slug].description}
                     cta="View Product"
-                    href={`/shop/${x.slug}`}
+                    href={productPath(x.slug)}
                     shop
                     className="w-[86%] shrink-0 snap-center md:w-auto"
                   />
