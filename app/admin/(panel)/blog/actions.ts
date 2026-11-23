@@ -60,6 +60,8 @@ export async function savePost(_prev: PostFormState, formData: FormData): Promis
     seoTitle: text("seoTitle") || null,
     seoDescription: text("seoDescription") || null,
     coverImage: text("coverImage") || null,
+    category: text("category").slice(0, 60) || null,
+    seoKeywords: text("seoKeywords").slice(0, 300) || null,
     body: sanitizeHtml(text("body"), allowedHtml),
   };
   const hasText = sanitizeHtml(values.body, { allowedTags: [] }).trim() !== "";

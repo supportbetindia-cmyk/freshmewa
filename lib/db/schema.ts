@@ -31,6 +31,8 @@ export const posts = pgTable("posts", {
   excerpt: text().notNull().default(""),
   seoTitle: text("seo_title"),
   seoDescription: text("seo_description"),
+  category: text(),                                       // display name, e.g. "Recipes"; null = uncategorised
+  seoKeywords: text("seo_keywords"),                      // comma-separated; null = none
   coverImage: text("cover_image"),
   body: text().notNull(),
   publishedAt: timestamp("published_at", { withTimezone: true }),

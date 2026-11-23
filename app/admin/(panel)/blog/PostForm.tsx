@@ -5,12 +5,12 @@ import { removePost, savePost } from "./actions";
 import RichEditor from "./RichEditor";
 import SeoFields, { field } from "./SeoFields";
 
-type Post = { id: number; slug: string; title: string; excerpt: string; seoTitle: string | null; seoDescription: string | null; coverImage: string | null; body: string; publishedAt: Date | null };
+type Post = { id: number; slug: string; title: string; excerpt: string; seoTitle: string | null; seoDescription: string | null; seoKeywords: string | null; category: string | null; coverImage: string | null; body: string; publishedAt: Date | null };
 
 const label = "block text-sm font-semibold text-forest";
 const hint = "font-normal text-ink-muted";
 
-export default function PostForm({ post }: { post?: Post }) {
+export default function PostForm({ post, categories }: { post?: Post; categories: string[] }) {
   const [state, action, pending] = useActionState(savePost, null);
   const v = state?.values ?? post;
   const live = Boolean(post?.publishedAt);
@@ -34,9 +34,15 @@ export default function PostForm({ post }: { post?: Post }) {
         <textarea name="excerpt" rows={2} defaultValue={v?.excerpt} className={field} />
       </label>
 
+      <label className={label}>
+        Category <span className={hint}>— optional, one per post. Pick an existing one or type a new one</span>
+        <input name="category" list="blog-categories" maxLength={60} defaultValue={v?.category ?? ""} placeholder="Recipes" className={field} />
+        <datalist id="blog-categories">{categories.map((c) => <option key={c} value={c} />)}</datalist>
+      </label>
+
       <CoverField initial={v?.coverImage} />
 
-      <SeoFields seoTitle={v?.seoTitle} seoDescription={v?.seoDescription} slug={v?.slug} />
+      <SeoFields seoTitle={v?.seoTitle} seoDescription={v?.seoDescription} seoKeywords={v?.seoKeywords} slug={v?.slug} />
 
       <div className={label}>
         Post <span className={hint}>paste from Google Docs, Word or a website — formatting comes along</span>

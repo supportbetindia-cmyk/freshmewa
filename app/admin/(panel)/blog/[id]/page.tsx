@@ -2,11 +2,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getPost } from "@/lib/db/posts";
 import PostForm from "../PostForm";
+import { listAllCategoryNames } from "@/lib/db/posts";
 
 export default async function EditPost({ params }: PageProps<"/admin/blog/[id]">) {
   const id = Number((await params).id);
   const post = Number.isSafeInteger(id) ? await getPost(id) : undefined;
   if (!post) notFound();
+  const categories = await listAllCategoryNames();
 
   return (
     <>
@@ -17,7 +19,7 @@ export default async function EditPost({ params }: PageProps<"/admin/blog/[id]">
           <Link href={`/blog/${post.slug}`} target="_blank" className="text-sm font-semibold text-forest underline">View on site ↗</Link>
         )}
       </div>
-      <div className="mt-5"><PostForm key={post.id} post={post} /></div>
+      <div className="mt-5"><PostForm key={post.id} post={post} categories={categories} /></div>
     </>
   );
 }

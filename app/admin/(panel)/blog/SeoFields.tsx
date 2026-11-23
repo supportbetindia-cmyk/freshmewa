@@ -10,7 +10,7 @@ function Count({ n, max }: { n: number; max: number }) {
   return <span className={`float-right font-normal tabular-nums ${n > max ? "text-chilli" : "text-ink-muted"}`}>{n}/{max}</span>;
 }
 
-export default function SeoFields({ seoTitle, seoDescription, slug }: { seoTitle?: string | null; seoDescription?: string | null; slug?: string }) {
+export default function SeoFields({ seoTitle, seoDescription, seoKeywords, slug }: { seoTitle?: string | null; seoDescription?: string | null; seoKeywords?: string | null; slug?: string }) {
   const [title, setTitle] = useState(seoTitle ?? "");
   const [description, setDescription] = useState(seoDescription ?? "");
 
@@ -28,6 +28,11 @@ export default function SeoFields({ seoTitle, seoDescription, slug }: { seoTitle
         SEO description <span className="font-normal text-ink-muted">— empty = uses the short summary</span>
         <Count n={description.length} max={LIMITS.description} />
         <textarea name="seoDescription" rows={3} value={description} onChange={(e) => setDescription(e.target.value)} className={field} />
+      </label>
+
+      <label className="block text-sm font-semibold text-forest">
+        Keywords <span className="font-normal text-ink-muted">— comma-separated, e.g. roasted makhana, peri peri snack. Google ignores these; some other search tools still read them</span>
+        <input name="seoKeywords" defaultValue={seoKeywords ?? ""} maxLength={300} className={field} />
       </label>
 
       <div aria-label="Google preview" className="rounded-xl bg-white p-4 font-sans">

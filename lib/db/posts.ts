@@ -1,17 +1,33 @@
 import "server-only";
 import { and, desc, eq, isNotNull } from "drizzle-orm";
 import { requireAdmin } from "@/lib/auth/users";
+import { slugify } from "@/lib/content";
 import { db } from ".";
 import { posts } from "./schema";
 
-export type PostInput = Pick<typeof posts.$inferInsert, "slug" | "title" | "excerpt" | "seoTitle" | "seoDescription" | "coverImage" | "body">;
+export type PostInput = Pick<typeof posts.$inferInsert, "slug" | "title" | "excerpt" | "seoTitle" | "seoDescription" | "seoKeywords" | "category" | "coverImage" | "body">;
 
-export async function listPublishedPosts() {
+export async function listPublishedPosts(category?: string) {
   return db
-    .select({ slug: posts.slug, title: posts.title, excerpt: posts.excerpt, coverImage: posts.coverImage, publishedAt: posts.publishedAt })
+    .select({ slug: posts.slug, title: posts.title, excerpt: posts.excerpt, category: posts.category, coverImage: posts.coverImage, publishedAt: posts.publishedAt })
     .from(posts)
-    .where(isNotNull(posts.publishedAt))
+    .where(category ? and(isNotNull(posts.publishedAt), eq(posts.category, category)) : isNotNull(posts.publishedAt))
     .orderBy(desc(posts.publishedAt));
+}
+
+/** Every category that has at least one published post, with its post count. */
+export async function listPublishedCategories() {
+  const rows = await listPublishedPosts();
+  const counts = new Map<string, number>();
+  for (const r of rows) if (r.category) counts.set(r.category, (counts.get(r.category) ?? 0) + 1);
+  return [...counts].map(([name, count]) => ({ name, slug: slugify(name), count })).sort((a, b) => a.name.localeCompare(b.name));
+}
+
+/** Existing category names (drafts included), for the editor's suggestions. */
+export async function listAllCategoryNames() {
+  await requireAdmin();
+  const rows = await db.selectDistinct({ category: posts.category }).from(posts);
+  return rows.map((r) => r.category).filter((c): c is string => !!c).sort();
 }
 
 export async function getPublishedPost(slug: string) {

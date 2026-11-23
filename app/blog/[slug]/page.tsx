@@ -39,6 +39,7 @@ export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): P
     title: post.seoTitle || `${post.title} — Fresh Mewa`,
     description,
     alternates: { canonical: `/blog/${post.slug}` },
+    keywords: post.seoKeywords ? post.seoKeywords.split(",").map((k) => k.trim()).filter(Boolean) : undefined,
     openGraph: {
       type: "article",
       title: post.seoTitle || post.title,
@@ -96,6 +97,11 @@ export default async function BlogPost({ params }: PageProps<"/blog/[slug]">) {
         <p className="mt-3 text-ink-muted">
           <time dateTime={post.publishedAt!.toISOString()}>{formatDate(post.publishedAt!)}</time> · {readingMinutes(post.body)} min read
         </p>
+        {post.category && (
+          <Link href={`/blog/category/${slugify(post.category)}`} className="mt-3 inline-block rounded-full bg-cream-deep px-3 py-1 text-sm font-semibold text-forest hover:bg-gold-soft/40">
+            {post.category}
+          </Link>
+        )}
         {post.coverImage && <CoverImage src={post.coverImage} alt={post.title} priority sizes="(min-width: 1024px) 42rem, 100vw" className="mt-6 rounded-[1.75rem]" />}
         <article className="blog-content mt-8 text-lg" dangerouslySetInnerHTML={{ __html: body }} />
 
