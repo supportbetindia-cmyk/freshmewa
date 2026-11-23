@@ -232,6 +232,7 @@ From the SEO report ("On Page Recommendation Best Fresh Mewa"):
 - **Environment variables** (Hostinger panel, never in git): `DATABASE_URL`, `DATABASE_URL_UNPOOLED`, `NEON_AUTH_BASE_URL`, `NEON_AUTH_JWKS_URL`, `NEON_AUTH_COOKIE_SECRET` (make a new one for production).
 - **Neon Auth:** add the live domain as a trusted domain (`neon neon-auth domain add https://your-domain`), or login redirects fail with "invalid domain".
 - **Server location:** pick the data centre closest to Neon (Singapore) — every database/login call crosses that distance.
+- **Live site is served by Vercel** (`Server: Vercel` header). `vercel.json` pins server functions (login, checkout, account, admin, placing orders) to **Singapore (`sin1`)**, next to the Neon database — the default was Washington DC (`iad1`), so every database call crossed the Pacific twice.
 
 ## Database (Neon Postgres + Drizzle)
 
@@ -314,4 +315,6 @@ Keep it that way:
 
 ## Fonts
 
-Veneer / Veneer Extras (Yellow Design Studio) are loaded from subset WOFF2 files in `app/fonts/`. The original `.ttf` files in `public/fonts/` are publicly downloadable — confirm the font licence allows that, or move them out of `public/`.
+Veneer / Veneer Extras (Yellow Design Studio) are loaded from subset WOFF2 files in `app/fonts/`.
+
+**`app/fonts/Veneer.woff2` is a lightened build:** the printed texture's tiniest specks (contours under 50 units², invisible at normal sizes) were removed. The original made the browser block for ~6.6 s drawing ~129,000 outline points (measured: Total Blocking Time ~6,600 ms → ~540 ms, file 166 KB → 67 KB). Original kept at `brand/Veneer-original.woff2`; copy it back to undo. The original `.ttf` files in `public/fonts/` are publicly downloadable — confirm the font licence allows that, or move them out of `public/`.

@@ -110,12 +110,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         />
       </head>
       <body>
-        <Script
-          async
-          src="https://www.googletagmanager.com/gtm.js?id=GTM-57ZBCQDP"
-          strategy="afterInteractive"
-        />
-        <Script id="freshmewa-analytics" strategy="afterInteractive">
+        {/* lazyOnload: GTM + GA (~180 KB, 550 KB of JS) start after the page has loaded, so they don't compete with it. */}
+        <Script src="https://www.googletagmanager.com/gtm.js?id=GTM-57ZBCQDP" strategy="lazyOnload" />
+        <Script id="freshmewa-analytics" strategy="lazyOnload">
           {`window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());`}
