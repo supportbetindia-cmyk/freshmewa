@@ -73,7 +73,22 @@ function CoverField({ initial }: { initial?: string | null }) {
   return (
     <label className={label}>
       Cover image <span className={hint}>— a site path like /images/blog/photo.jpg, or an https:// link (optional)</span>
-      <input name="coverImage" value={src} onChange={(e) => setSrc(e.target.value.trim())} placeholder="/images/blog/makhana-recipes.jpg" className={field} />
+      <div className="mt-1.5 flex flex-wrap gap-2">
+        <input name="coverImage" value={src} onChange={(e) => setSrc(e.target.value.trim())} placeholder="/images/blog/makhana-recipes.jpg" className={`${field} mt-0 flex-1`} />
+        <label className="btn btn-outline h-12 cursor-pointer bg-white text-forest">
+          Upload
+          <input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={async (e) => {
+            const file = e.target.files?.[0];
+            e.target.value = "";
+            if (!file) return;
+            const body = new FormData();
+            body.append("file", file);
+            const res = await fetch("/api/admin/blog-images", { method: "POST", body });
+            const data = await res.json().catch(() => ({}));
+            if (res.ok) setSrc(data.url); else alert(data.error ?? "Upload failed.");
+          }} />
+        </label>
+      </div>
       {src && (
         // eslint-disable-next-line @next/next/no-img-element -- admin-only preview of whatever link was typed
         <img src={src} alt="" className="mt-2 aspect-[1200/630] w-full max-w-sm rounded-xl bg-cream object-cover" />

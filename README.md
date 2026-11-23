@@ -269,6 +269,9 @@ From the SEO report ("On Page Recommendation Best Fresh Mewa"):
 ## Blog
 
 - **Write:** `/admin/blog` → New post. Paste from Google Docs, Word or a website — headings, bold, lists, links and quotes are kept (Tiptap editor, `RichEditor.tsx`). Empty URL field = made from the title.
+- **Editor toolbar** (WordPress-style): paragraph / H2 / H3, bold, italic, underline, strikethrough, text colour, highlight, alignment, bulleted / numbered lists, quote, code block, horizontal line, link, **tables** (insert, add/remove rows and columns, header row, merge/split, delete), undo/redo.
+- **Images in posts:** click **Image** to upload, or paste / drag an image into the editor. Stored in the database table `blog_images` (base64, max 3 MB, JPG/PNG/WebP/GIF — the real file type is checked, not just the name). Served at `/api/blog-images/<id>` with a 1-year cache. Upload route: `app/api/admin/blog-images` (admin only). Good for a few hundred images; for many large photos move to Neon object storage later.
+- **Alt text:** select an image, click **Alt**, and describe it (used by Google and screen readers).
 - **Cover image** (optional): a site path like `/images/blog/photo.jpg` (put the file in `public/images/blog/`) or an `https://` link — checked on save (no `javascript:` / `http:` / `//other-host`). Shown on the blog card, at the top of the post, as the share image and in the article schema. Site paths are resized to AVIF/WebP; https links are shown as-is. Best shape 1200×630.
 - **Reading time** ("14 min read") is counted from the post text (200 words/min).
 - **More from the blog**: up to 3 other recent posts under each post (`app/blog/PostCard.tsx` is the shared card).

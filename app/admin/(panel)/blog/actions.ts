@@ -10,10 +10,27 @@ import { slugify } from "@/lib/content";
 export type PostFormState = { error?: string; success?: string; values?: PostInput } | null;
 
 const allowedHtml: sanitizeHtml.IOptions = {
-  allowedTags: ["h2", "h3", "h4", "p", "br", "strong", "em", "u", "s", "a", "ul", "ol", "li", "blockquote", "img", "hr", "code", "pre"],
-  allowedAttributes: { a: ["href"], img: ["src", "alt"] },
+  allowedTags: ["h2", "h3", "h4", "p", "br", "strong", "em", "u", "s", "a", "ul", "ol", "li", "blockquote", "img", "hr", "code", "pre",
+    "table", "thead", "tbody", "tr", "th", "td", "span", "mark"],
+  allowedAttributes: {
+    a: ["href"],
+    img: ["src", "alt"],
+    th: ["colspan", "rowspan", "style"],
+    td: ["colspan", "rowspan", "style"],
+    p: ["style"], h2: ["style"], h3: ["style"], h4: ["style"],
+    span: ["style"],
+    mark: ["style"],
+  },
+  allowedStyles: {
+    "*": {
+      "text-align": [/^(left|center|right|justify)$/],
+      color: [/^#[0-9a-f]{3,8}$/i, /^rgba?\([\d\s.,%]+\)$/],
+      "background-color": [/^#[0-9a-f]{3,8}$/i, /^rgba?\([\d\s.,%]+\)$/],
+    },
+  },
   allowedSchemes: ["http", "https", "mailto"],
-  transformTags: { h1: "h2", b: "strong", i: "em" },
+  allowProtocolRelative: false,
+  transformTags: { h1: "h2", b: "strong", i: "em" }, // the page title is the only <h1>
   exclusiveFilter: (frame) => frame.tag === "img" && !frame.attribs.src,
 };
 

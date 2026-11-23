@@ -49,3 +49,10 @@ export const addresses = pgTable("addresses", {
 }, (t) => [
   index("addresses_user_id_idx").on(t.userId),
 ]);
+/** Images uploaded in the blog editor, stored in the database (the host's disk is read-only). Base64, max ~3 MB each. */
+export const blogImages = pgTable("blog_images", {
+  id: uuid().primaryKey().defaultRandom(),
+  mime: text().notNull(),
+  data: text().notNull(), // base64
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
