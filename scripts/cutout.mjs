@@ -1,13 +1,6 @@
-// Turns product photos shot on white into transparent WebP cutouts.
-// Usage: node scripts/cutout.mjs <input.jpg> [...more]  → writes <input>.webp next to each file.
-//
-// 1. Colour-to-alpha against the white backdrop gives soft, natural shadows.
-// 2. A flood fill from the image border marks what is really background; everything it
-//    can't reach is the product itself and is kept fully opaque (so pale kraft paper or
-//    cashews don't turn see-through when placed over type).
 import sharp from "sharp";
 
-const SUBJECT_ALPHA = 0.22; // colour-to-alpha value above which a pixel stops the flood fill
+const SUBJECT_ALPHA = 0.22;
 
 for (const file of process.argv.slice(2)) {
   const { data, info } = await sharp(file)
@@ -18,7 +11,6 @@ for (const file of process.argv.slice(2)) {
   const { width: w, height: h } = info;
   const n = w * h;
 
-  // Background level = brightest corner, so off-white/grey backdrops still drop out fully.
   const px = (x, y) => (y * w + x) * 3;
   const corners = [px(0, 0), px(w - 1, 0), px(0, h - 1), px(w - 1, h - 1)];
   const bg = Math.max(...corners.map((i) => Math.min(data[i], data[i + 1], data[i + 2])));
@@ -35,7 +27,6 @@ for (const file of process.argv.slice(2)) {
     soft[p] = a < 0.03 ? 0 : a;
   }
 
-  // Flood fill background from the border through low-alpha pixels.
   const background = new Uint8Array(n);
   const stack = [];
   for (let x = 0; x < w; x++) stack.push(x, (h - 1) * w + x);
@@ -51,7 +42,6 @@ for (const file of process.argv.slice(2)) {
     if (p < n - w) stack.push(p + w);
   }
 
-  // Subject pixels within 2px of the background keep the soft alpha → no light fringe.
   const R = 2;
   const nearBg = (p) => {
     const x = p % w, y = (p / w) | 0;

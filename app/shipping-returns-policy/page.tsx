@@ -4,7 +4,6 @@ import { ArrowRight, ChevronRight, Clock3, PackageCheck, RotateCcw, Truck } from
 import Reveal from "@/components/ui/Reveal";
 import { checkoutSettings, formatINR, pageMeta, routes, seo } from "@/lib/content";
 
-// Indexable now (SEO report). Several values below still say "To be confirmed" — finish them before promoting this page.
 export const metadata: Metadata = pageMeta(seo.shipping, routes.shipping);
 
 export default function ShippingReturnsPage() {

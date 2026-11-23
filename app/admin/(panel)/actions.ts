@@ -5,5 +5,5 @@ import { auth } from "@/lib/auth/server";
 
 export async function signOut() {
   await auth.signOut();
-  redirect("/admin/login");
+  redirect("/login");
 }

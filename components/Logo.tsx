@@ -9,7 +9,6 @@ export default function Logo({ className = "" }: { className?: string }) {
     >
       <svg viewBox="0 0 32 32" className="size-7 shrink-0" aria-hidden>
         <circle cx="16" cy="16" r="15" className="fill-forest" />
-        {/* stylised almond with a pistachio leaf */}
         <path d="M16 7c4.5 3.2 5.6 9.8 0 18-5.6-8.2-4.5-14.8 0-18z" className="fill-gold-soft" />
         <path d="M16 11v10" className="stroke-forest" strokeWidth="1" strokeLinecap="round" />
         <path

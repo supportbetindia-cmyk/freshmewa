@@ -6,7 +6,6 @@ import { Check, ShoppingBag, Zap } from "lucide-react";
 import { cart } from "@/lib/cart";
 import { packs } from "@/lib/content";
 
-/** Add to Cart (with a short "Added" confirmation) + Buy Now (adds, then opens the cart). */
 export default function CartButtons({
   slug,
   name,

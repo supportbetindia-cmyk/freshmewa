@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { m, useScroll } from "framer-motion";
 import { storyChapters } from "@/lib/content";
 
-/** Thin gold reading-progress bar pinned to the very top of the window. */
 export function ReadingProgress() {
   const { scrollYProgress } = useScroll();
   return (
@@ -16,7 +15,6 @@ export function ReadingProgress() {
   );
 }
 
-/** Sticky chapter list (desktop). Highlights the chapter currently being read. */
 export function ChapterNav() {
   const [active, setActive] = useState(storyChapters[0].id);
 
@@ -26,7 +24,6 @@ export function ChapterNav() {
         const visible = entries.filter((e) => e.isIntersecting);
         if (visible.length) setActive(visible[0].target.id);
       },
-      // A chapter counts as "current" when it crosses the upper third of the screen.
       { rootMargin: "-30% 0px -60% 0px" },
     );
     storyChapters.forEach((c) => {

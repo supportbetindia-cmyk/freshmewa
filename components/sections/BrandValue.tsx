@@ -12,7 +12,6 @@ export default function BrandValue() {
 
         <div className="mt-8 grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-12">
           <Reveal className="relative mx-auto w-full max-w-xl">
-            {/* soft gold "tabletop" glow under the bowl + kulhad */}
             <div aria-hidden className="absolute inset-x-[6%] bottom-[2%] h-[38%] rounded-[50%] bg-gold-soft/45 blur-2xl" />
             <Image
               src={chaiBowl}

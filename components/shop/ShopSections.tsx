@@ -79,7 +79,6 @@ export function Collection() {
           <h2 className="poster-h2 text-forest">The Fresh Mewa Range</h2>
         </Reveal>
       </div>
-      {/* Mobile: swipeable row. Tablet/desktop: grid. */}
       <div className="mx-auto mt-8 flex max-w-7xl snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-2 [scrollbar-width:none] sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-8 lg:grid-cols-3 lg:gap-5">
           {flavours.map((f, i) => (
             <FlavourCard

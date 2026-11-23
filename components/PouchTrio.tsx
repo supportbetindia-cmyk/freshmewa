@@ -1,7 +1,6 @@
 import { flavours } from "@/lib/content";
 import MakhanaPouch from "./MakhanaPouch";
 
-/** The three flavour pouches fanned out, gently floating (CSS keyframes, transform only). */
 export default function PouchTrio({ priority = false, className = "" }: { priority?: boolean; className?: string }) {
   return (
     <div className={`relative mx-auto flex w-full max-w-md items-end justify-center ${className}`}>

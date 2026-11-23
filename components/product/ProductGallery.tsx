@@ -23,7 +23,6 @@ const flavourShots: Record<string, [StaticImageData, StaticImageData, StaticImag
   "peri-peri": [periBowl, periTop, periClose],
 };
 
-/** Main stage (jar first, then lifestyle shots) with crossfading slides and thumbnails. */
 export default function ProductGallery({ flavour: f }: { flavour: Flavour }) {
   const [active, setActive] = useState(0);
   const t = tones[f.tone];

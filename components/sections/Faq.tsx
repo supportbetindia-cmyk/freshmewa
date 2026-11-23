@@ -1,12 +1,9 @@
+import JsonLd from "@/components/JsonLd";
 import { Plus } from "lucide-react";
 import Reveal from "../ui/Reveal";
 
 type QA = { q: string; a: string[] };
 
-/**
- * FAQ accordion (native <details>) + FAQPage structured data so answer engines can quote it.
- * `schemaExtra` adds Q&As that appear elsewhere on the page (e.g. the makhana explainer).
- */
 export default function Faq({
   title,
   items,
@@ -28,10 +25,7 @@ export default function Faq({
 
   return (
     <section id="faq" className="scroll-mt-20 py-14 sm:py-16 lg:py-20">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
-      />
+      <JsonLd data={jsonLd} />
       <div className="mx-auto grid max-w-7xl gap-6 px-5 sm:px-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14">
         <Reveal className="lg:sticky lg:top-24 lg:self-start">
           <h2 className="poster-h2 text-forest">{title}</h2>

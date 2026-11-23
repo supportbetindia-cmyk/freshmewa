@@ -14,7 +14,6 @@ import { cart, countItems, useCart } from "@/lib/cart";
 import { ease } from "@/lib/motion";
 import { navLinks } from "@/lib/content";
 
-
 const iconBtn =
   "relative grid size-10 place-items-center rounded-full text-forest transition-colors hover:bg-forest/5 focus-visible:outline-2 focus-visible:outline-gold";
 
@@ -28,9 +27,7 @@ export default function Navbar() {
   const cartCount = countItems(lines);
   const locked = open || cartOpen;
 
-
   useMotionValueEvent(scrollY, "change", (y) => setScrolled(y > 24));
-
 
   useEffect(() => {
     if (!locked) return;
@@ -49,8 +46,6 @@ export default function Navbar() {
     };
   }, [locked, lenis]);
 
-  // Close the drawer. Same-page "/#section" links glide there (Lenis is paused while the
-  // drawer is open); everything else is a normal route change.
   const goTo = (e: React.MouseEvent, href: string) => {
     setOpen(false);
     const [path, hash] = href.split("#");
@@ -64,11 +59,8 @@ export default function Navbar() {
     }
   };
 
-
-
   return (
     <>
-      {/* CSS entrance (globals.css enter-fade-up): visible at first paint, no waiting for JavaScript */}
       <header
         style={{ "--enter-y": "-24px", animationDuration: "0.9s", animationDelay: "0.2s" } as React.CSSProperties}
         className="enter-fade-up fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-5 sm:pt-4"
@@ -81,7 +73,6 @@ export default function Navbar() {
               : "border border-transparent"
           }`}
         >
-          {/* Mobile: menu */}
           <button
             type="button"
             aria-label="Open menu"

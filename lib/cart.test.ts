@@ -1,4 +1,3 @@
-// Run: node lib/cart.test.ts
 import assert from "node:assert/strict";
 import { addLine, countItems, setLineQty } from "./cart.ts";
 

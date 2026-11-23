@@ -3,10 +3,9 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/server";
 import { safeNext } from "@/lib/safe-next";
+import { isEmail } from "@/lib/orders";
 
 export type LoginState = { step: "email" | "code"; email?: string; error?: string; sent?: boolean } | null;
-
-const isEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
 
 export async function emailLogin(_prev: LoginState, formData: FormData): Promise<LoginState> {
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
@@ -24,7 +23,6 @@ export async function emailLogin(_prev: LoginState, formData: FormData): Promise
     return { step: "code", email, sent: resend };
   }
 
-  // First login with this email creates the customer's account automatically.
   const { error } = await auth.signIn.emailOtp({ email, otp });
   if (error) return { step: "code", email, error: "That code is wrong or has expired." };
 

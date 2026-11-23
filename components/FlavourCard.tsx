@@ -8,10 +8,6 @@ import CartButtons from "./CartButtons";
 import MakhanaPouch from "./MakhanaPouch";
 import Reveal from "./ui/Reveal";
 
-/**
- * Flavour product card — homepage + shop. Layout width comes from `className`.
- * With `shop`, the card gets Add to Cart / Buy Now; otherwise a single CTA link.
- */
 export default function FlavourCard({
   flavour: f,
   index,
@@ -34,7 +30,6 @@ export default function FlavourCard({
   className?: string;
 }) {
   const t = tones[f.tone];
-  // Size the background word so every flavour name spans the stage (Veneer ≈ 0.39em per glyph).
   const wordSize = `${Math.min(34, 96 / (f.short.length * 0.39))}cqw`;
 
   return (
@@ -43,7 +38,6 @@ export default function FlavourCard({
       delay={index * 0.08}
       className={`group relative flex scroll-mt-24 flex-col overflow-hidden rounded-[2rem] bg-white/70 ring-1 ring-forest/10 transition-[translate,box-shadow] duration-500 ease-premium hover:-translate-y-1.5 hover:shadow-[0_32px_60px_-30px_rgba(30,52,24,0.5)] ${className}`}
     >
-      {/* ── Stage ── */}
       <div className={`relative overflow-hidden @container ${showcase ? `grain aspect-square ${f.tone === "chilli" ? "bg-[#edb69f]" : f.tone === "pepper" ? "bg-cream-deep" : "bg-mint-soft"}` : `aspect-[5/4] ${t.soft}`}`}>
         <div aria-hidden className="absolute inset-0 bg-[radial-gradient(55%_60%_at_50%_42%,rgb(255_255_255/0.75),transparent_75%)]" />
         <span
@@ -75,7 +69,6 @@ export default function FlavourCard({
           </div>
         )}
 
-        {/* Pouch + soft contact shadow */}
         <div aria-hidden className="absolute bottom-[5%] left-1/2 h-[7%] w-[38%] -translate-x-1/2 rounded-[50%] bg-forest/25 blur-md transition-transform duration-700 ease-premium group-hover:scale-x-90" />
         <div className={`absolute bottom-[7%] left-1/2 -translate-x-1/2 ${showcase ? "w-[43%]" : "w-[38%]"}`}>
           <MakhanaPouch
@@ -86,7 +79,6 @@ export default function FlavourCard({
         </div>
       </div>
 
-      {/* ── Details ── */}
       <div className="flex flex-1 flex-col p-5 sm:p-6">
         <div className="flex items-start justify-between gap-3">
           <h3 className="font-poster text-[1.9rem] uppercase leading-[0.95] text-forest sm:text-[2.1rem]">{f.name}</h3>

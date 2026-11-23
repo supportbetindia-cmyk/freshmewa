@@ -5,15 +5,13 @@ import { EditorContent, useEditor, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Image } from "@tiptap/extension-image";
 
-/** WYSIWYG editor. Paste from Google Docs / Word / websites keeps headings, bold, lists, links.
- *  The HTML goes into a hidden input, so the surrounding <form> sends it like any other field. */
 export default function RichEditor({ name, initial = "" }: { name: string; initial?: string }) {
   const [html, setHtml] = useState(initial);
   const editor = useEditor({
     extensions: [StarterKit.configure({ link: { openOnClick: false } }), Image],
     content: initial,
-    immediatelyRender: false, // Next renders on the server first; the editor only exists in the browser
-    shouldRerenderOnTransaction: true, // keeps toolbar buttons' "active" state in sync
+    immediatelyRender: false,
+    shouldRerenderOnTransaction: true,
     editorProps: { attributes: { class: "blog-content min-h-80 px-4 py-3 outline-none" } },
     onUpdate: ({ editor }) => setHtml(editor.getHTML()),
   });
@@ -48,7 +46,7 @@ function Toolbar({ editor }: { editor: Editor }) {
       {btn("Quote", editor.isActive("blockquote"), () => c().toggleBlockquote().run())}
       {btn("Link", editor.isActive("link"), () => {
         const href = prompt("Link URL (empty = remove link)", editor.getAttributes("link").href ?? "https://");
-        if (href === null) return; // Cancel
+        if (href === null) return;
         if (href) c().extendMarkRange("link").setLink({ href }).run();
         else c().extendMarkRange("link").unsetLink().run();
       })}

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { requireAdmin } from "@/lib/auth/admin";
+import { requireAdmin } from "@/lib/auth/users";
 import { signOut } from "./actions";
 
 export default async function AdminLayout({ children }: LayoutProps<"/admin">) {

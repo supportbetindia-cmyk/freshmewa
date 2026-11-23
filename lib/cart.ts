@@ -3,7 +3,6 @@
 import { useSyncExternalStore } from "react";
 import { MAX_QTY } from "./orders.ts";
 
-/** One cart line = one flavour in one pack size. */
 export type CartLine = { slug: string; pack: string; qty: number };
 type CartState = { lines: CartLine[]; open: boolean };
 
@@ -12,7 +11,6 @@ const empty: CartState = { lines: [], open: false };
 
 const same = (l: CartLine, slug: string, pack: string) => l.slug === slug && l.pack === pack;
 
-// ── Pure line helpers (checked in cart.test.ts) ──
 export function addLine(lines: CartLine[], slug: string, pack: string, qty = 1): CartLine[] {
   if (!lines.some((l) => same(l, slug, pack))) return [...lines, { slug, pack, qty: Math.min(qty, MAX_QTY) }];
   return lines.map((l) => (same(l, slug, pack) ? { ...l, qty: Math.min(l.qty + qty, MAX_QTY) } : l));
@@ -25,8 +23,6 @@ export function setLineQty(lines: CartLine[], slug: string, pack: string, qty: n
 
 export const countItems = (lines: CartLine[]) => lines.reduce((n, l) => n + l.qty, 0);
 
-// ── Tiny external store, persisted to localStorage ──
-// ponytail: client-only cart; swap for a server cart/API when checkout is built.
 let state = empty;
 let loaded = false;
 const listeners = new Set<() => void>();

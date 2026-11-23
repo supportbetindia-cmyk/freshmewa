@@ -11,12 +11,8 @@ type Result =
   | { ok: true; order: Order }
   | { ok: false; error: string; errors?: Partial<Record<keyof CheckoutForm, string>> };
 
-/**
- * Anyone can call a server action with any data, so this re-validates everything and
- * prices the order from lib/content.ts — the browser only sends what was picked (slug, pack, qty).
- */
 export async function placeOrder(form: CheckoutForm, lines: CartLine[]): Promise<Result> {
-  const user = await requireUser("/checkout"); // not logged in → off to /login (cart stays in the browser)
+  const user = await requireUser("/checkout");
 
   const errors = validateCheckout(form);
   if (Object.keys(errors).length) return { ok: false, error: "Please fix the highlighted fields.", errors };
@@ -26,7 +22,7 @@ export async function placeOrder(form: CheckoutForm, lines: CartLine[]): Promise
   const items: OrderItem[] = [];
   for (const l of lines) {
     const flavour = flavours.find((f) => f.slug === l.slug);
-    const pack = packs.find((p) => p.id === l.pack); // not packById: that falls back to the first pack
+    const pack = packs.find((p) => p.id === l.pack);
     if (!flavour || !pack || !Number.isInteger(l.qty) || l.qty < 1 || l.qty > MAX_QTY) {
       return { ok: false, error: "Something in your cart isn't available. Please refresh and try again." };
     }
@@ -58,7 +54,7 @@ export async function placeOrder(form: CheckoutForm, lines: CartLine[]): Promise
       userId: user.id,
       name: order.name,
       phone: order.phone,
-      email: form.email.trim() || user.email, // empty at checkout → their login email
+      email: form.email.trim() || user.email,
       address: order.address,
       items,
       subtotal,

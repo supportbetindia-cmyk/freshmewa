@@ -13,8 +13,8 @@ export async function updateStatus(_previous: UpdateStatusState, formData: FormD
     return { error: "Choose a valid order and status, then try again." };
   }
 
-  const updated = await setOrderStatus(id, status); // checks admin first
+  const updated = await setOrderStatus(id, status);
   if (!updated) return { error: "This order no longer exists. Return to the orders list." };
-  revalidatePath("/admin/orders", "layout"); // refresh the list and this order's page
+  revalidatePath("/admin/orders", "layout");
   return { success: "Order status updated." };
 }

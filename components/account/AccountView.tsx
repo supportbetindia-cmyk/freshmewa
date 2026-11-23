@@ -21,7 +21,7 @@ const date = (d: Date | string) => new Date(d).toLocaleDateString("en-IN", { tim
 
 export default function AccountView({ user, orders, addresses }: { user: { name: string; email: string }; orders: MyOrder[]; addresses: Address[] }) {
   const { ready } = useAccount();
-  const contact = addresses[0]; // default address = first
+  const contact = addresses[0];
   const profile = { name: contact?.name || user.name, phone: contact?.phone ?? "", email: contact?.email || user.email };
   const [tab, setTab] = useState<Tab>("orders");
   const dialog = useRef<HTMLDialogElement>(null);
@@ -36,7 +36,6 @@ export default function AccountView({ user, orders, addresses }: { user: { name:
 
   return (
     <>
-      {/* Header */}
       <div className="border-b border-forest/10">
         <div className="mx-auto flex max-w-6xl flex-wrap items-end justify-between gap-3 px-5 pb-8 sm:px-8">
           <h1 className="poster-h2 text-forest">My Account</h1>
@@ -49,7 +48,6 @@ export default function AccountView({ user, orders, addresses }: { user: { name:
 
       <div className="bg-cream-deep/50">
         <div className="mx-auto grid max-w-6xl gap-6 px-5 pb-20 pt-8 sm:px-8 lg:grid-cols-[22rem_1fr] lg:gap-10 lg:pb-24 lg:pt-12">
-          {/* Side nav */}
           <div className="space-y-4">
             <nav aria-label="Account" className="overflow-hidden rounded-[1.5rem] border border-forest/10 bg-white">
               {tabs.map(({ id, title, sub, Icon }) => {
@@ -74,7 +72,6 @@ export default function AccountView({ user, orders, addresses }: { user: { name:
                 );
               })}
             </nav>
-            {/* Server ends the session; onSubmit first clears this device's saved addresses */}
             <form action={logOut} onSubmit={() => account.logout()}>
               <button type="submit" className="btn btn-outline w-full gap-2 bg-white text-forest">
                 <LogOut className="size-4" /> Log out
@@ -82,7 +79,6 @@ export default function AccountView({ user, orders, addresses }: { user: { name:
             </form>
           </div>
 
-          {/* Panel */}
           <section aria-live="polite" className="min-h-[28rem] rounded-[1.5rem] bg-white/70 p-5 sm:p-8">
             {tab === "orders" && (
               <>

@@ -21,7 +21,6 @@ export default function OurStoryPage() {
     <>
       <ReadingProgress />
       <main>
-        {/* ── Hero: sticker collage around wobbly poster letters ── */}
         <section className="grain relative overflow-hidden pb-14 pt-28 lg:pb-16 lg:pt-32">
           <div aria-hidden className="pointer-events-none absolute inset-0">
             <Image src={spicedBowl} alt="" sizes="22rem" className="absolute -bottom-6 -left-10 w-48 -rotate-12 sm:w-72 lg:-left-6 lg:bottom-0 lg:w-[22rem]" />
@@ -89,7 +88,6 @@ export default function OurStoryPage() {
           </div>
         </section>
 
-        {/* ── Chapters ── */}
         <div className="bg-cream-deep/50">
           <div className="mx-auto grid max-w-6xl gap-10 px-5 py-6 sm:px-8 lg:grid-cols-[14rem_minmax(0,44rem)] lg:justify-between lg:py-12">
             <aside>

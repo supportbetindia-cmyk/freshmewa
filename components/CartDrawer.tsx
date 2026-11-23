@@ -11,7 +11,6 @@ import { productImage } from "@/lib/product-images";
 
 const bySlug = Object.fromEntries(flavours.map((f) => [f.slug, f]));
 
-/** Slide-in cart. Open/close state lives in the cart store so any button can open it. */
 export default function CartDrawer() {
   const { lines, open } = useCart();
   const items = lines.filter((l) => bySlug[l.slug]);

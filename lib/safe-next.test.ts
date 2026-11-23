@@ -1,4 +1,3 @@
-// Run: node lib/safe-next.test.ts
 import assert from "node:assert/strict";
 import { safeNext } from "./safe-next.ts";
 

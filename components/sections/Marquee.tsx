@@ -1,6 +1,5 @@
 import { flavours } from "@/lib/content";
 
-/** Flavour ticker between the hero and the intro. Pure CSS animation (transform only). */
 export default function Marquee() {
   const items = [...flavours, ...flavours, ...flavours];
   return (

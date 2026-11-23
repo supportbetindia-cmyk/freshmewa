@@ -1,26 +1,30 @@
+import JsonLd from "@/components/JsonLd";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import MakhanaPouch from "@/components/MakhanaPouch";
-import { flavours, formatDate, formatINR, packs, productPath, routes } from "@/lib/content";
-import { getPublishedPost } from "@/lib/db/posts";
+import { flavours, formatDate, formatINR, packs, productPath, routes, siteUrl, slugify } from "@/lib/content";
+import { getPublishedPost, listPublishedPosts } from "@/lib/db/posts";
+import CoverImage from "../CoverImage";
+import PostCard from "../PostCard";
 
-/** generateMetadata and the page both need the post — cache() makes that one database query, not two. */
 const getPost = cache(getPublishedPost);
 
-/** Empty list = build no posts ahead of time; each one is built on its first visit, then served as static HTML. */
 export function generateStaticParams() {
   return [];
 }
 
-/** Gives every <h2>/<h3> an id, and returns them as a table of contents. */
+const readingMinutes = (html: string) => Math.max(1, Math.round(html.replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length / 200));
+
+const shareImage = (cover: string | null) => (cover ? (cover.startsWith("/") ? siteUrl + cover : cover) : `${siteUrl}/opengraph-image.jpg`);
+
 function addHeadingIds(html: string) {
   const toc: { id: string; label: string; level: string }[] = [];
   const body = html.replace(/<h([23])>([\s\S]*?)<\/h\1>/g, (_, level: string, inner: string) => {
-    const label = inner.replace(/<[^>]+>/g, ""); // "<strong>TL;DR</strong>" → "TL;DR"
-    let id = label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "section";
-    if (toc.some((t) => t.id === id)) id += `-${toc.length}`; // two headings with the same text
+    const label = inner.replace(/<[^>]+>/g, "");
+    let id = slugify(label) || "section";
+    if (toc.some((t) => t.id === id)) id += `-${toc.length}`;
     toc.push({ id, label, level });
     return `<h${level} id="${id}">${inner}</h${level}>`;
   });
@@ -30,34 +34,47 @@ function addHeadingIds(html: string) {
 export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): Promise<Metadata> {
   const post = await getPost((await params).slug);
   if (!post) return {};
+  const description = post.seoDescription || post.excerpt || undefined;
   return {
-    title: `${post.title} — Fresh Mewa`,
+    title: post.seoTitle || `${post.title} — Fresh Mewa`,
+    description,
     alternates: { canonical: `/blog/${post.slug}` },
-    description: post.excerpt || undefined,
-    openGraph: { type: "article", title: post.title, description: post.excerpt || undefined, publishedTime: post.publishedAt!.toISOString() },
+    openGraph: {
+      type: "article",
+      title: post.seoTitle || post.title,
+      description,
+      url: `/blog/${post.slug}`,
+      siteName: "Fresh Mewa",
+      publishedTime: post.publishedAt!.toISOString(),
+      modifiedTime: post.updatedAt.toISOString(),
+      images: shareImage(post.coverImage),
+    },
   };
 }
 
 export default async function BlogPost({ params }: PageProps<"/blog/[slug]">) {
   const post = await getPost((await params).slug);
-  if (!post) notFound(); // missing, or still a draft
+  if (!post) notFound();
 
   const { body, toc } = addHeadingIds(post.body);
+  const related = (await listPublishedPosts()).filter((p) => p.slug !== post.slug).slice(0, 3);
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: post.title,
-    description: post.excerpt,
+    description: post.seoDescription || post.excerpt,
+    image: shareImage(post.coverImage),
+    mainEntityOfPage: `${siteUrl}/blog/${post.slug}`,
     datePublished: post.publishedAt!.toISOString(),
     dateModified: post.updatedAt.toISOString(),
-    author: { "@type": "Organization", name: "Fresh Mewa" },
+    author: { "@type": "Organization", name: "Fresh Mewa", url: siteUrl },
+    publisher: { "@type": "Organization", name: "Fresh Mewa", logo: { "@type": "ImageObject", url: `${siteUrl}/images/logo.webp` } },
   };
 
   return (
     <main className="mx-auto max-w-7xl px-5 pb-16 pt-28 sm:px-8 lg:grid lg:grid-cols-[12rem_minmax(0,1fr)_16rem] lg:gap-10 lg:pt-32 xl:gap-14">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
+      <JsonLd data={jsonLd} />
 
-      {/* Left: table of contents (wide screens only) */}
       <aside className="max-lg:hidden">
         {toc.length > 1 && (
           <nav aria-label="On this page" className="sticky top-28">
@@ -65,7 +82,6 @@ export default async function BlogPost({ params }: PageProps<"/blog/[slug]">) {
             <ul className="mt-3 space-y-2 border-l border-forest/15 text-sm">
               {toc.map((t) => (
                 <li key={t.id} className={t.level === "3" ? "pl-6" : "pl-3"}>
-                  {/* label is already-cleaned post HTML text, so &amp; etc. display correctly */}
                   <a href={`#${t.id}`} className="block text-ink-muted hover:text-forest" dangerouslySetInnerHTML={{ __html: t.label }} />
                 </li>
               ))}
@@ -74,16 +90,27 @@ export default async function BlogPost({ params }: PageProps<"/blog/[slug]">) {
         )}
       </aside>
 
-      {/* Middle: the post */}
       <div>
         <Link href="/blog" className="text-sm font-semibold text-forest hover:underline">← All posts</Link>
         <h1 className="mt-4 font-display text-4xl leading-tight text-forest sm:text-5xl">{post.title}</h1>
-        <time dateTime={post.publishedAt!.toISOString()} className="mt-3 block text-ink-muted">{formatDate(post.publishedAt!)}</time>
-        {/* Safe only because savePost cleans the HTML with sanitize-html before saving */}
+        <p className="mt-3 text-ink-muted">
+          <time dateTime={post.publishedAt!.toISOString()}>{formatDate(post.publishedAt!)}</time> · {readingMinutes(post.body)} min read
+        </p>
+        {post.coverImage && <CoverImage src={post.coverImage} alt={post.title} priority sizes="(min-width: 1024px) 42rem, 100vw" className="mt-6 rounded-[1.75rem]" />}
         <article className="blog-content mt-8 text-lg" dangerouslySetInnerHTML={{ __html: body }} />
+
+        {related.length > 0 && (
+          <section aria-labelledby="more-posts" className="mt-14 border-t border-forest/10 pt-8">
+            <h2 id="more-posts" className="font-poster text-3xl text-forest">More from the blog</h2>
+            <ul className="mt-5 grid gap-5 sm:grid-cols-2">
+              {related.map((p) => (
+                <li key={p.slug}><PostCard post={p} sizes="(min-width: 640px) 21rem, 100vw" /></li>
+              ))}
+            </ul>
+          </section>
+        )}
       </div>
 
-      {/* Right: flavours (under the post on phones) */}
       <aside className="mt-12 lg:mt-0">
         <div className="rounded-[1.75rem] border border-forest/10 bg-white p-5 lg:sticky lg:top-28">
           <p className="font-poster text-2xl text-forest">Our flavours</p>

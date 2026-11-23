@@ -95,7 +95,7 @@ Every page is a folder in `app/` (folder path = URL). Code that only runs on the
 | `blog/[slug]/page.tsx` | `/blog/why-makhana` … | One post + table of contents + flavours sidebar, `BlogPosting` JSON-LD |
 | `api/auth/[...path]/route.ts` | `/api/auth/*` | Forwards login/session requests to Neon Auth |
 | `admin/page.tsx` | `/admin` | Redirects to `/admin/orders` |
-| `admin/login/` | `/admin/login` | Admin sign-in form + its server action |
+| `admin/login/` | `/admin/login` | Sends you to `/login` (email code), then back to `/admin/orders` |
 | `admin/(panel)/` | — | Everything behind login. `(panel)` is a *route group*: brackets keep it out of the URL |
 | `admin/(panel)/layout.tsx` | — | Admin header (email, Sign out) + admin check |
 | `admin/(panel)/actions.ts` | — | `signOut` server action |
@@ -144,8 +144,7 @@ Every page is a folder in `app/` (folder path = URL). Code that only runs on the
 | `db/orders.ts` | server | Admin order queries (`listOrders`, `getOrder`, `setOrderStatus`) — each checks admin itself. `listMyOrders()` = the logged-in customer's orders (takes no user id on purpose) |
 | `db/posts.ts` | server | Blog queries: public ones return published posts only; admin ones check admin |
 | `auth/server.ts` | server | Neon Auth instance (`auth.getSession`, `auth.signIn`, …) |
-| `auth/admin.ts` | server | `requireAdmin()` — call at the top of every admin page/action |
-| `auth/users.ts` | server | `requireUser(next)` — any logged-in customer, else `/login?next=…`. One session lookup per request (`cache`) |
+| `auth/users.ts` | server | `getUser()` (one cached session lookup per request), `requireUser(next)` (any logged-in customer, else `/login?next=…`), `requireAdmin()` (role `admin`, else login / homepage) |
 | `auth/client.ts` | browser | Browser auth client (Google sign-in) |
 
 ### Assets and tools
@@ -214,6 +213,14 @@ Flow: product/shop card → **Add to Cart / Buy Now** → cart drawer → **Chec
 - [ ] Online payments (e.g. Razorpay) + order status updates
 - [ ] Set the delivery fee policy
 
+## Security
+
+- **Headers** (`next.config.ts` → `headers`): `X-Frame-Options: SAMEORIGIN` (no embedding the shop in other sites), `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy` (no camera/mic/location/payment APIs). `X-Powered-By` is off. HSTS comes from Vercel.
+- **Every server action checks the caller** — `requireAdmin()` / `requireUser()` from `lib/auth/users.ts`, called before any `try` (their redirect works by throwing).
+- **Form limits** (`lib/orders.ts`): phone / pincode / email formats, state must be in `indianStates`, every field ≤ 300 characters — checked in the browser *and* again on the server.
+- **Blog HTML** is cleaned with `sanitize-html` on save; JSON-LD goes through `components/JsonLd.tsx` (escapes `<`).
+- **Known, not fixed:** `npm audit` still reports issues inside Neon Auth's beta dependencies (`better-auth`, `zod`; fix = `@neondatabase/auth@0.7.0-beta`, a breaking upgrade to test separately) and in `drizzle-kit` (development-only tool).
+
 ## SEO
 
 From the SEO report ("On Page Recommendation Best Fresh Mewa"):
@@ -253,15 +260,20 @@ From the SEO report ("On Page Recommendation Best Fresh Mewa"):
 
 ## Admin (`/admin`)
 
-- **Login:** `/admin/login` (email + password via **Neon Auth**, `lib/auth/server.ts`; browser auth calls go through `app/api/auth/[...path]`). Needs `NEON_AUTH_COOKIE_SECRET` in `.env.local` (32+ random chars).
-- **Who gets in:** only users with role `admin`. Add one: sign up through `/api/auth/sign-up/email`, then Neon console → Auth → Users → ⋯ → **Make admin**. (Users created in the console have no password.)
+- **Login:** no passwords. `/admin` (or `/admin/login`) → `/login` → enter the admin email → 6-digit code by email (or Google) → back to `/admin/orders`. Access comes from the account's **role**, not from how you logged in. Neon Auth (`lib/auth/server.ts`); browser auth calls go through `app/api/auth/[...path]`. Needs `NEON_AUTH_COOKIE_SECRET` (32+ random chars) and the live domain added as a **trusted domain** in Neon Auth (otherwise every login fails with "Invalid origin").
+- **Who gets in:** only users with role `admin` (currently `ashumaurya074@gmail.com`). Add one: they log in once at `/login`, then Neon console → Auth → Users → their email → ⋯ → **Make admin**. Keep admin email inboxes secure (2-step verification) — the inbox is the key.
 - **Pages:** `/admin/orders` (newest first, filter by status) → `/admin/orders/[id]` (items, totals, customer, address, status dropdown). Admin pages hide the shop navbar/footer (`components/HideOnAdmin.tsx`).
-- **Security rule:** every order query lives in `lib/db/orders.ts` and calls `requireAdmin()` (`lib/auth/admin.ts`) itself — pages *and* server actions are protected even if called directly. Tested: a logged-out `updateStatus` request is redirected to the login and the order is unchanged.
+- **Security rule:** every order query lives in `lib/db/orders.ts` and calls `requireAdmin()` (`lib/auth/users.ts`) itself — pages *and* server actions are protected even if called directly. Tested: a logged-out `updateStatus` request is redirected to the login and the order is unchanged.
 - Server-only files import `"server-only"` so the build fails if browser code ever imports them.
 
 ## Blog
 
 - **Write:** `/admin/blog` → New post. Paste from Google Docs, Word or a website — headings, bold, lists, links and quotes are kept (Tiptap editor, `RichEditor.tsx`). Empty URL field = made from the title.
+- **Cover image** (optional): a site path like `/images/blog/photo.jpg` (put the file in `public/images/blog/`) or an `https://` link — checked on save (no `javascript:` / `http:` / `//other-host`). Shown on the blog card, at the top of the post, as the share image and in the article schema. Site paths are resized to AVIF/WebP; https links are shown as-is. Best shape 1200×630.
+- **Reading time** ("14 min read") is counted from the post text (200 words/min).
+- **More from the blog**: up to 3 other recent posts under each post (`app/blog/PostCard.tsx` is the shared card).
+- **Blog** is in the menu + footer (`navLinks` in `lib/content.ts`).
+- **SEO title / SEO description** (optional, "Google (SEO)" box in the editor): what Google shows. Counters warn past ~60 / ~160 characters, with a live Google preview. Empty = the post title / short summary are used. Columns `seo_title`, `seo_description` on `posts`.
 - **Buttons:** Save draft / Publish / Unpublish (Publish also saves edits), Delete (asks first). Duplicate URLs are blocked by the database (`slug` unique) and shown as an error.
 - **Security:** post HTML is cleaned on the server with `sanitize-html` before saving (only headings, text formatting, lists, links, quotes, images; no scripts/styles/`javascript:` links), because the public page inserts it as HTML.
 - **Speed:** `/blog` and each `/blog/[slug]` are served as static HTML; saving, publishing or deleting a post rebuilds them (`revalidatePath("/blog", "layout")`).

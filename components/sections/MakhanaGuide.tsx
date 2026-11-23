@@ -17,7 +17,6 @@ export default function MakhanaGuide() {
               <p key={p}>{p}</p>
             ))}
           </div>
-          {/* Loose makhana scattered in the corner */}
           <div aria-hidden className="pointer-events-none absolute -bottom-4 -right-4 h-40 w-48 sm:h-48 sm:w-60">
             <Image src={m1} alt="" sizes="6rem" className="absolute bottom-6 right-20 w-20 rotate-12 sm:w-24" />
             <Image src={m5} alt="" sizes="6rem" className="absolute bottom-0 right-2 w-24 -rotate-12 sm:w-28" />

@@ -12,10 +12,6 @@ const fields: (keyof AddressForm)[] = ["name", "phone", "email", "line", "line2"
 const box =
   "h-13 w-full rounded-xl border border-forest/20 bg-white px-4 text-[0.98rem] text-forest outline-none transition-[border-color,box-shadow] placeholder:text-ink-muted/70 focus:border-forest focus:ring-4 focus:ring-gold-soft/50 aria-[invalid=true]:border-chilli";
 
-/**
- * "Add New Address" modal (native <dialog>: Esc to close, focus handled by the browser).
- * Open it with `ref.current?.showModal()` (pause Lenis first — the dialog resumes it on close).
- */
 export default function AddressDialog({ profile, ref }: { profile: Profile | null; ref: React.Ref<HTMLDialogElement> }) {
   const [errors, setErrors] = useState<Partial<Record<keyof AddressForm, string>>>({});
   const [saving, setSaving] = useState(false);
@@ -85,7 +81,6 @@ export default function AddressDialog({ profile, ref }: { profile: Profile | nul
         </h2>
       </div>
 
-      {/* key: refill contact defaults when the profile appears */}
       <form key={profile?.phone ?? "guest"} onSubmit={submit} noValidate className="px-5 py-6 sm:px-8 sm:py-7">
         <h3 className="font-semibold text-forest">Customer Info</h3>
         <div className="mt-3 grid gap-4 sm:grid-cols-3">

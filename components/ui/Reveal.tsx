@@ -3,7 +3,6 @@
 import { m, type HTMLMotionProps } from "framer-motion";
 import { ease } from "@/lib/motion";
 
-/** Fade + rise once when scrolled into view. Transform/opacity only. */
 export default function Reveal({
   delay = 0,
   y = 28,

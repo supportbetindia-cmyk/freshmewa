@@ -6,7 +6,6 @@ import { Minus, Package, Plus, Sprout, Truck } from "lucide-react";
 import { checkoutSettings, type Flavour, formatINR, packs, productDetails, routes, tones } from "@/lib/content";
 import CartButtons from "../CartButtons";
 
-/** Pack size + quantity selection, live price, Add to Cart / Buy Now. */
 export default function BuyBox({ flavour: f }: { flavour: Flavour }) {
   const [packId, setPackId] = useState(packs[0].id);
   const [qty, setQty] = useState(1);

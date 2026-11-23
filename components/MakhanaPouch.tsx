@@ -2,7 +2,6 @@ import Image from "next/image";
 import type { Flavour } from "@/lib/content";
 import { productImage } from "@/lib/product-images";
 
-/** Branded jar photography shared by product cards and promotional sections. */
 export default function MakhanaPouch({
   flavour, sizes, priority = false, className = "",
 }: {

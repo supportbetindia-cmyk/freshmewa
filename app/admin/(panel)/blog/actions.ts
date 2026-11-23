@@ -2,25 +2,23 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import sanitizeHtml from "sanitize-html"; // NEW
-import { requireAdmin } from "@/lib/auth/admin";
+import sanitizeHtml from "sanitize-html";
+import { requireAdmin } from "@/lib/auth/users";
 import { createPost, deletePost, setPublished, updatePost, type PostInput } from "@/lib/db/posts";
+import { slugify } from "@/lib/content";
 
 export type PostFormState = { error?: string; success?: string; values?: PostInput } | null;
 
-// NEW — only these tags/attributes survive. Scripts, styles, onclick=, javascript: links, pasted base64 images are removed.
 const allowedHtml: sanitizeHtml.IOptions = {
   allowedTags: ["h2", "h3", "h4", "p", "br", "strong", "em", "u", "s", "a", "ul", "ol", "li", "blockquote", "img", "hr", "code", "pre"],
   allowedAttributes: { a: ["href"], img: ["src", "alt"] },
   allowedSchemes: ["http", "https", "mailto"],
-  transformTags: { h1: "h2", b: "strong", i: "em" }, // the page title is the only <h1>
+  transformTags: { h1: "h2", b: "strong", i: "em" },
   exclusiveFilter: (frame) => frame.tag === "img" && !frame.attribs.src,
 };
 
-/** "Why Makhana? A Superfood!" → "why-makhana-a-superfood" */
-const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+const isImageLink = (s: string) => /^\/(?![/\\])\S+$/.test(s) || /^https:\/\/\S+$/.test(s);
 
-/** Postgres error 23505 = unique rule broken (slug already used). Drizzle puts the driver's error in `.cause`. */
 function isDuplicate(err: unknown) {
   const e = err as { code?: string; cause?: { code?: string } };
   return (e.cause?.code ?? e.code) === "23505";
@@ -28,26 +26,32 @@ function isDuplicate(err: unknown) {
 
 function refresh() {
   revalidatePath("/admin/blog", "layout");
-  revalidatePath("/blog", "layout"); // the public pages (step 4)
+  revalidatePath("/blog", "layout");
 }
 
 export async function savePost(_prev: PostFormState, formData: FormData): Promise<PostFormState> {
-  await requireAdmin(); // before the try below: its redirect works by throwing, and catch would swallow it
+  await requireAdmin();
 
   const text = (name: string) => String(formData.get(name) ?? "").trim();
   const rawId = text("id");
-  const id = rawId ? Number(rawId) : undefined; // no id = new post
-  const intent = formData.get("intent"); // which button was clicked: "save" | "publish" | "unpublish"
+  const id = rawId ? Number(rawId) : undefined;
+  const intent = formData.get("intent");
   const values: PostInput = {
     title: text("title"),
-    slug: slugify(text("slug") || text("title")), // empty URL field → made from the title
+    slug: slugify(text("slug") || text("title")),
     excerpt: text("excerpt"),
-    body: sanitizeHtml(text("body"), allowedHtml), // NEW
+    seoTitle: text("seoTitle") || null,
+    seoDescription: text("seoDescription") || null,
+    coverImage: text("coverImage") || null,
+    body: sanitizeHtml(text("body"), allowedHtml),
   };
-  const hasText = sanitizeHtml(values.body, { allowedTags: [] }).trim() !== ""; // NEW — "<p></p>" counts as empty
+  const hasText = sanitizeHtml(values.body, { allowedTags: [] }).trim() !== "";
 
   if (id !== undefined && !Number.isSafeInteger(id)) return { error: "Invalid post." };
   if (!values.title || !values.slug || !hasText) return { error: "Title and post text are required.", values };
+  if (values.coverImage && !isImageLink(values.coverImage)) {
+    return { error: "Cover image must be a site path like /images/blog/photo.jpg or an https:// link.", values };
+  }
 
   let postId = id;
   try {
@@ -64,7 +68,7 @@ export async function savePost(_prev: PostFormState, formData: FormData): Promis
   }
 
   refresh();
-  if (!id) redirect(`/admin/blog/${postId}`); // new post → go to its edit page
+  if (!id) redirect(`/admin/blog/${postId}`);
   return { success: intent === "publish" ? "Published." : intent === "unpublish" ? "Moved back to drafts." : "Saved." };
 }
 

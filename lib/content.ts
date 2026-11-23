@@ -1,17 +1,15 @@
-// Homepage copy + product data. Kept verbatim and structured so it can move to a CMS later.
 
 export const siteUrl = "https://www.bestfreshmewa.com";
 
-/** Public URLs (names from the SEO report). Old ones 301-redirect here — see next.config.ts. */
 export const routes = {
   shop: "/shop-dry-fruits",
   story: "/our-story-fresh-mewa",
   shipping: "/shipping-returns-policy",
 } as const;
-/** Product page URL: /shop/pudina-makhana. The flavour slug itself (cart, orders) stays "pudina". */
 export const productPath = (slug: string) => `/shop/${slug}-makhana`;
 
-/** Page titles + descriptions from the SEO report ("Url Mapping"), verbatim. */
+export const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+
 export const seo = {
   home: {
     title: "Fresh Mewa | Roasted Makhana & Flavoured Fox Nuts",
@@ -45,11 +43,9 @@ export const seo = {
   } as Record<string, { title: string; description: string }>,
 };
 
-/** Title, description, canonical URL and social-share tags for one page. The share image is app/opengraph-image.jpg. */
 export const pageMeta = (s: { title: string; description: string }, path: string) => ({
   ...s,
   alternates: { canonical: path },
-  // images: a page's own openGraph replaces the inherited one, so name the share image explicitly
   openGraph: { ...s, url: path, siteName: "Fresh Mewa", locale: "en_IN", type: "website" as const, images: "/opengraph-image.jpg" },
 });
 
@@ -58,10 +54,10 @@ export const navLinks = [
   { label: "Flavours", href: "/#flavours" },
   { label: "Why Fresh Mewa", href: "/#why" },
   { label: "Our Story", href: routes.story },
+  { label: "Blog", href: "/blog" },
   { label: "FAQs", href: "/#faq" },
 ]
 
-/** "7 October 2026" — blog dates. */
 export const formatDate = (d: Date) => d.toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "long" });
 export type Flavour = {
   slug: string;
@@ -70,11 +66,9 @@ export type Flavour = {
   tagline: string;
   description: string;
   cta: string;
-  /** Tailwind colour token names from globals.css */
   tone: "mint" | "pepper" | "chilli";
 };
 
-/** Literal class strings so Tailwind picks them up. */
 export const tones = {
   mint: { soft: "bg-mint-soft", text: "text-mint", solid: "bg-mint" },
   pepper: { soft: "bg-pepper-soft", text: "text-pepper", solid: "bg-pepper" },
@@ -210,9 +204,7 @@ export const faqs = [
   },
 ];
 
-// ── Shop page ────────────────────────────────────────────────
 
-/** Shop-page copy per flavour, keyed by slug. */
 export const shopFlavours: Record<string, { tagline: string; description: string; guide: string }> = {
   pudina: {
     tagline: "Cool. Herby. Refreshing.",
@@ -262,9 +254,6 @@ export const shopFaqs = [
   },
 ];
 
-// ── Product pages ────────────────────────────────────────────
-// ⚠️ SAMPLE DATA: packs, prices, ingredients and nutrition below are placeholders.
-// Replace with the values printed on the real packaging before launch (see README).
 
 export type Pack = { id: string; label: string; price: number; mrp: number };
 
@@ -313,7 +302,6 @@ export const productDetails: Record<string, { ingredients: string; nutrition: [s
 export const packById = (id: string) => packs.find((p) => p.id === id) ?? packs[0];
 export const formatINR = (n: number) => `₹${n.toLocaleString("en-IN")}`;
 
-// ── Our Story page ───────────────────────────────────────────
 
 export const storyChapters = [
   { id: "we-snack", title: "We Snack. A Lot." },
@@ -355,14 +343,8 @@ export const storyFaqs = [
   },
 ];
 
-// ── Checkout ─────────────────────────────────────────────────
 export const checkoutSettings = {
-  /** ⚠️ SAMPLE: delivery charge in ₹ (0 = free). Set the real policy before launch. */
   deliveryFee: 0,
-  /**
-   * WhatsApp number that receives new orders, with country code and no "+" (e.g. "919876543210").
-   * Empty = WhatsApp hand-off is off and orders are only saved on the customer's device.
-   */
   orderWhatsApp: "",
 };
 

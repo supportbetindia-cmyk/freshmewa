@@ -17,7 +17,6 @@ export default function Flavours() {
         </Reveal>
       </div>
 
-      {/* Mobile: swipeable row. Desktop: three columns. */}
       <div className="mx-auto mt-8 flex max-w-7xl snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-2 [scrollbar-width:none] sm:px-8 lg:grid lg:grid-cols-3 lg:gap-5 lg:overflow-visible">
         {flavours.map((f, i) => (
           <FlavourCard

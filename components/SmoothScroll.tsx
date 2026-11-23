@@ -3,7 +3,6 @@
 import { ReactLenis } from "lenis/react";
 import { useReducedMotion } from "framer-motion";
 
-/** Lenis smooth scrolling for the whole page; native scroll for reduced-motion users. */
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
   const reduced = useReducedMotion();
   if (reduced) return children;

@@ -3,7 +3,6 @@ import { ArrowRight } from "lucide-react";
 import PouchTrio from "../PouchTrio";
 import Reveal from "../ui/Reveal";
 
-/** Closing forest-green CTA band with the floating pouch trio. Page-specific copy goes in `children`. */
 export default function FinalCta({
   title,
   cta,

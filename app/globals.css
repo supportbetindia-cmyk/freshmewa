@@ -2,7 +2,6 @@
 @import "lenis/dist/lenis.css";
 
 @theme {
-  /* Forest green, antique gold, and warm ivory from the brand reference. */
   --color-cream: #faf7f2;
   --color-cream-deep: #f0e8d9;
   --color-sand: #e3d5b8;
@@ -16,7 +15,6 @@
   --color-ink-muted: #5d6856;
   --color-forest-deep: #142410;
 
-  /* Flavour accents */
   --color-mint: #5f8a5a;
   --color-mint-soft: #dfe9d6;
   --color-pepper: #3a3a36;
@@ -29,7 +27,6 @@
   --font-deva: var(--font-tiro);
   --font-poster: var(--font-veneer);
   --font-hand: var(--font-comic);
-  /* Veneer Extras glyphs: "7" flourish, "z" star, "6" scalloped seal */
   --font-ornament: var(--font-veneer-extras);
 
   --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
@@ -50,12 +47,10 @@ body {
   color: var(--color-forest);
 }
 
-/* Veneer is subset to capitals only (app/fonts/Veneer.woff2) — keep it uppercase everywhere. */
 .font-poster {
   text-transform: uppercase;
 }
 
-/* Subtle paper grain for a printed, editorial feel. */
 .grain::after {
   content: "";
   position: absolute;
@@ -65,7 +60,6 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .35 0 0 0 0 .25 0 0 0 .08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* ── Shared type + buttons (keep every section on the same system) ── */
 @utility poster-h2 {
   font-family: var(--font-poster);
   text-transform: uppercase;
@@ -115,7 +109,6 @@ body {
   }
 }
 
-/* Marker-pen highlight behind inline text (Our Story page). */
 @utility marker {
   background: linear-gradient(transparent 55%, color-mix(in oklab, var(--color-gold-soft) 75%, transparent) 55% 92%, transparent 92%);
   padding-inline: 0.1em;
@@ -140,7 +133,6 @@ body {
   }
 }
 
-/* Blog post HTML — used by the admin editor and the public /blog/[slug] page. */
 .blog-content { line-height: 1.75; }
 .blog-content > * + * { margin-top: 1em; }
 .blog-content h2 { font-family: var(--font-display); font-size: 1.6rem; line-height: 1.25; color: var(--color-forest); margin-top: 1.6em; }
@@ -150,10 +142,7 @@ body {
 .blog-content ol { list-style: decimal; padding-left: 1.4em; }
 .blog-content blockquote { border-left: 3px solid var(--color-gold-soft); padding-left: 1em; color: var(--color-ink-muted); font-style: italic; }
 .blog-content img { border-radius: 1rem; max-width: 100%; height: auto; }
-.blog-content :is(h2, h3) { scroll-margin-top: 7rem; } /* jump links land below the fixed navbar */
-/* First-screen entrance animations (hero + navbar). CSS instead of framer-motion so they start at the first paint,
-   not after the JavaScript loads — the headline and bowl appear sooner (LCP). Same easing/timings as before;
-   tune per element with style={{ animationDelay, animationDuration, "--enter-y", "--enter-scale" }}. */
+.blog-content :is(h2, h3) { scroll-margin-top: 7rem; }
 @keyframes enter-rise { from { transform: translateY(var(--enter-y, 135%)); } }
 @keyframes enter-fade-up { from { opacity: 0; transform: translateY(var(--enter-y, 32px)) scale(var(--enter-scale, 1)); } }
 @keyframes enter-fade { from { opacity: 0; } }

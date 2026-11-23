@@ -8,11 +8,6 @@ import m5 from "@/public/images/hero/makhana-5.webp";
 import spicedBowl from "@/public/images/hero/makhana-bowl-spiced.webp";
 import logo from "@/public/images/logo.webp";
 
-/*
- * Top edge = a "smile": cubic Bézier M0,0 C360,100 1080,100 1440,0 (viewBox 1440×100), footer green below it.
- * Points on that curve (as % of the curve box), used to rest makhana on it:
- * t=.12 → (10, 32) · t=.3 → (28, 63) · t=.42 → (41, 73) · t=.58 → (59, 73) · t=.7 → (72, 63) · t=.88 → (90, 32)
- */
 const pieces: { src: StaticImageData; x: number; y: number; size: string; rotate: number; desktopOnly?: boolean }[] = [
   { src: m1, x: 10, y: 32, size: "w-9 sm:w-12", rotate: 14, desktopOnly: true },
   { src: m5, x: 28, y: 63, size: "w-10 sm:w-14", rotate: -18 },
@@ -28,7 +23,6 @@ export default function Footer() {
       style={{ "--curve": "clamp(2.5rem, 6vw, 6rem)" } as React.CSSProperties}
       className="relative text-cream"
     >
-      {/* ── Light band with the makhana bowl, resting in the dip of the curved top ── */}
       <div aria-hidden className="pointer-events-none relative bg-cream pt-[clamp(8.5rem,18vw,15rem)]">
         <div className="absolute bottom-[calc(var(--curve)*0.05)] left-1/2 z-10 w-[clamp(13rem,30vw,25rem)] -translate-x-1/2">
           <Image
@@ -62,11 +56,9 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* ── Footer body ── */}
       <div className="relative -mt-px overflow-hidden bg-forest-deep pt-8">
         <div className="relative mx-auto grid max-w-7xl gap-8 px-5 sm:px-8 md:grid-cols-[1.2fr_1fr_1fr]">
           <div>
-            {/* Cream card: the logo's dark-green lettering would disappear on the footer green. */}
             <Link href="/" aria-label="Fresh Mewa home" className="inline-block rounded-2xl bg-cream px-5 py-3 transition-transform duration-300 hover:-rotate-2">
               <Image src={logo} alt="Fresh Mewa" sizes="9rem" className="h-auto w-32 sm:w-36" />
             </Link>

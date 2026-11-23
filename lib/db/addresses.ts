@@ -7,7 +7,6 @@ import { addresses } from "./schema";
 
 const isUuid = (s: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s);
 
-/** The logged-in customer's addresses, default first. Like listMyOrders: no user id parameter, on purpose. */
 export async function listMyAddresses(): Promise<Address[]> {
   const user = await requireUser("/account");
   const rows = await db

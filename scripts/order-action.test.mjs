@@ -1,4 +1,3 @@
-// Run: node scripts/order-action.test.mjs — no live database or orders are touched.
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { runInNewContext } from "node:vm";

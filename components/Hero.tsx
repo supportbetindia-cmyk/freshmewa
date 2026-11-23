@@ -15,7 +15,6 @@ export default function Hero() {
   const reduced = useReducedMotion();
   const k = reduced ? 0 : 1;
 
-  // Scroll-linked parallax while the hero leaves the viewport (no pinning → no dead scroll).
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const titleY = useTransform(p, [0, 1], [0, 140 * k]);
   const artY = useTransform(p, [0, 1], [0, -80 * k]);
@@ -31,9 +30,6 @@ export default function Hero() {
       aria-label="Fresh Mewa roasted makhana"
       className="relative overflow-hidden lg:h-svh lg:min-h-[680px] "
     >
-      {/* ── Background ─────────────────────────────── */}
-      {/* Entrance animations on this screen are CSS (enter-* in globals.css): they start at first paint, not after
-          the JavaScript loads — so the headline and bowl show up fast (LCP). Framer only drives the parallax. */}
       <m.div aria-hidden style={{ y: bgY }} className="enter-fade grain absolute inset-0 will-change-transform">
         <div className="absolute inset-0 bg-[radial-gradient(45%_45%_at_50%_70%,var(--color-gold-soft)_0%,transparent_75%)] opacity-55" />
         <div className="absolute inset-0 bg-[radial-gradient(40%_40%_at_0%_100%,var(--color-pista-soft)_0%,transparent_70%)] opacity-70" />
@@ -41,7 +37,6 @@ export default function Hero() {
       </m.div>
 
       <div className="relative mx-auto flex h-full max-w-[1440px] flex-col items-center px-5 pb-10 pt-28 sm:px-8 lg:pb-0 lg:pt-[6.5rem]">
-        {/* ── Poster headline ─────────────────────── */}
         <m.div style={{ y: titleY }} className="relative z-0 w-full text-center">
           <m.div style={{ x: titleMouseX, y: titleMouseY }}>
             <h1 className="font-poster font-normal uppercase leading-[0.86] text-forest">
@@ -51,8 +46,6 @@ export default function Hero() {
                   aria-hidden
                   className="block whitespace-nowrap text-[26vw] lg:inline lg:text-[min(13.4vw,25svh)]"
                 >
-                  {/* Clip box padded by 0.15em (negative margin keeps the layout): Veneer's glyphs are taller than the
-                      0.86 line, and Safari clipped their tops. Letters start at 135% so they're fully hidden below it. */}
                   {word.split("").map((ch, i) => (
                     <span key={i} className="-my-[0.15em] inline-block overflow-hidden py-[0.15em] align-top">
                       <span className="enter-rise inline-block" style={{ animationDelay: `${0.3 + wi * 0.25 + i * 0.04}s` }}>
@@ -68,7 +61,6 @@ export default function Hero() {
           </m.div>
         </m.div>
 
-        {/* ── Hero product: one bowl, centred, overlapping the lower part of the headline ── */}
         <m.div
           style={{ scale: artScale, y: artY }}
           className="relative z-10 -mt-[10%] w-full max-w-[min(28rem,36svh)] flex-none lg:absolute lg:bottom-[5svh] lg:left-1/2 lg:mt-0 lg:w-[min(50vw,760px,78svh)] lg:max-w-none lg:-translate-x-1/2"
@@ -76,7 +68,6 @@ export default function Hero() {
           <HeroBowl mx={mouse.x} my={mouse.y} />
         </m.div>
 
-        {/* ── Copy: stacked on mobile, flanking the products on desktop ── */}
         <m.div
           style={{ y: copyY }}
           className="relative z-20 mt-4 grid w-full gap-5 text-center lg:pointer-events-none lg:absolute lg:inset-x-8 lg:bottom-12 lg:mt-0 lg:w-auto lg:grid-cols-[minmax(0,24rem)_1fr_minmax(0,19rem)] lg:items-end lg:text-left"

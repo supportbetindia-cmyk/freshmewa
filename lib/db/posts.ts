@@ -1,16 +1,14 @@
 import "server-only";
 import { and, desc, eq, isNotNull } from "drizzle-orm";
-import { requireAdmin } from "@/lib/auth/admin";
+import { requireAdmin } from "@/lib/auth/users";
 import { db } from ".";
 import { posts } from "./schema";
 
-/** The fields the admin form edits. Everything else (id, dates) Postgres/Drizzle fills in. */
-export type PostInput = Pick<typeof posts.$inferInsert, "slug" | "title" | "excerpt" | "body">;
-
+export type PostInput = Pick<typeof posts.$inferInsert, "slug" | "title" | "excerpt" | "seoTitle" | "seoDescription" | "coverImage" | "body">;
 
 export async function listPublishedPosts() {
   return db
-    .select({ slug: posts.slug, title: posts.title, excerpt: posts.excerpt, publishedAt: posts.publishedAt })
+    .select({ slug: posts.slug, title: posts.title, excerpt: posts.excerpt, coverImage: posts.coverImage, publishedAt: posts.publishedAt })
     .from(posts)
     .where(isNotNull(posts.publishedAt))
     .orderBy(desc(posts.publishedAt));
@@ -24,8 +22,6 @@ export async function getPublishedPost(slug: string) {
     .limit(1);
   return post;
 }
-
-// ---------- Admin: every function checks the login first ----------
 
 export async function listAllPosts() {
   await requireAdmin();
@@ -44,13 +40,13 @@ export async function getPost(id: number) {
 export async function createPost(data: PostInput) {
   await requireAdmin();
   const [post] = await db.insert(posts).values(data).returning({ id: posts.id });
-  return post; // new posts start as drafts (publishedAt = null)
+  return post;
 }
 
 export async function updatePost(id: number, data: PostInput) {
   await requireAdmin();
   const [post] = await db.update(posts).set(data).where(eq(posts.id, id)).returning({ id: posts.id });
-  return post; // undefined = no post with that id
+  return post;
 }
 
 export async function setPublished(id: number, published: boolean) {

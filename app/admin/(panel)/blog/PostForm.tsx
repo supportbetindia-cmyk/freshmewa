@@ -1,18 +1,18 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { removePost, savePost } from "./actions";
 import RichEditor from "./RichEditor";
+import SeoFields, { field } from "./SeoFields";
 
-type Post = { id: number; slug: string; title: string; excerpt: string; body: string; publishedAt: Date | null };
+type Post = { id: number; slug: string; title: string; excerpt: string; seoTitle: string | null; seoDescription: string | null; coverImage: string | null; body: string; publishedAt: Date | null };
 
 const label = "block text-sm font-semibold text-forest";
 const hint = "font-normal text-ink-muted";
-const field = "mt-1.5 w-full rounded-xl border border-forest/20 bg-white px-4 py-3 font-normal text-ink outline-none focus:border-forest focus:ring-4 focus:ring-gold-soft/50";
 
 export default function PostForm({ post }: { post?: Post }) {
   const [state, action, pending] = useActionState(savePost, null);
-  const v = state?.values ?? post; // after an error, show what was typed, not the saved version
+  const v = state?.values ?? post;
   const live = Boolean(post?.publishedAt);
 
   return (
@@ -33,6 +33,10 @@ export default function PostForm({ post }: { post?: Post }) {
         Short summary <span className={hint}>shown on the blog list and in Google</span>
         <textarea name="excerpt" rows={2} defaultValue={v?.excerpt} className={field} />
       </label>
+
+      <CoverField initial={v?.coverImage} />
+
+      <SeoFields seoTitle={v?.seoTitle} seoDescription={v?.seoDescription} slug={v?.slug} />
 
       <div className={label}>
         Post <span className={hint}>paste from Google Docs, Word or a website — formatting comes along</span>
@@ -62,5 +66,18 @@ export default function PostForm({ post }: { post?: Post }) {
         )}
       </div>
     </form>
+  );
+}
+function CoverField({ initial }: { initial?: string | null }) {
+  const [src, setSrc] = useState(initial ?? "");
+  return (
+    <label className={label}>
+      Cover image <span className={hint}>— a site path like /images/blog/photo.jpg, or an https:// link (optional)</span>
+      <input name="coverImage" value={src} onChange={(e) => setSrc(e.target.value.trim())} placeholder="/images/blog/makhana-recipes.jpg" className={field} />
+      {src && (
+        // eslint-disable-next-line @next/next/no-img-element -- admin-only preview of whatever link was typed
+        <img src={src} alt="" className="mt-2 aspect-[1200/630] w-full max-w-sm rounded-xl bg-cream object-cover" />
+      )}
+    </label>
   );
 }

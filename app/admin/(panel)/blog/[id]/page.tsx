@@ -5,7 +5,7 @@ import PostForm from "../PostForm";
 
 export default async function EditPost({ params }: PageProps<"/admin/blog/[id]">) {
   const id = Number((await params).id);
-  const post = Number.isSafeInteger(id) ? await getPost(id) : undefined; // "/admin/blog/abc" → 404, not a database error
+  const post = Number.isSafeInteger(id) ? await getPost(id) : undefined;
   if (!post) notFound();
 
   return (

@@ -14,7 +14,6 @@ import { productImage } from "@/lib/product-images";
 const bySlug = Object.fromEntries(flavours.map((f) => [f.slug, f]));
 const fields: (keyof Form)[] = ["name", "phone", "email", "line", "city", "state", "pincode"];
 
-/** Checkout has one address line, so fold a saved address's optional parts into it (nothing gets lost). */
 const fullLine = (a: Address) =>
   [a.line, a.line2, a.locality, a.landmark && `Near ${a.landmark}`].map((p) => p?.trim()).filter(Boolean).join(", ");
 
@@ -50,7 +49,7 @@ export default function CheckoutForm() {
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (placing || items.length === 0) return;
-    const el = e.currentTarget; // React clears e.currentTarget after an await
+    const el = e.currentTarget;
     const data = new FormData(el);
     const form = Object.fromEntries(fields.map((k) => [k, String(data.get(k) ?? "").trim()])) as Form;
     const found = validateCheckout(form);
@@ -62,7 +61,6 @@ export default function CheckoutForm() {
       return;
     }
 
-    // The server re-checks everything and prices the order itself, then saves it to the database.
     setPlacing(true);
     const res = await placeOrder(form, items).catch(() => ({ ok: false, error: "Couldn't reach the store. Check your connection and try again." }) as const);
     if (!res.ok) {
@@ -75,7 +73,6 @@ export default function CheckoutForm() {
     account.placeOrder(order, form.email);
     cart.clear();
 
-    // Hand the order to the store's WhatsApp (if configured) so it actually reaches the team.
     if (checkoutSettings.orderWhatsApp) {
       const text = [
         `New order ${order.id} (Cash on Delivery)`,
@@ -89,7 +86,6 @@ export default function CheckoutForm() {
     router.push(`/checkout/success?order=${order.id}`);
   }
 
-  // Cart + account load from this device together; wait so we don't flash "empty cart".
   if (!ready) return <div className="min-h-[60vh]" aria-busy />;
 
   if (items.length === 0 && !placing) {
@@ -117,13 +113,12 @@ export default function CheckoutForm() {
   return (
     <form
       ref={formRef}
-      key={profile?.phone ?? "guest"} // remount once saved details load from the device
+      key={profile?.phone ?? "guest"}
       onSubmit={submit}
       noValidate
       className="grid gap-6 lg:grid-cols-[1.35fr_1fr] lg:items-start lg:gap-10"
     >
       <div className="space-y-5">
-        {/* Contact */}
         <fieldset className="rounded-[1.5rem] border border-forest/10 bg-white/60 p-5 sm:p-6">
           <legend className="sr-only">Contact details</legend>
           <h2 className="font-poster text-2xl text-forest">1. Contact</h2>
@@ -158,7 +153,6 @@ export default function CheckoutForm() {
           </div>
         </fieldset>
 
-        {/* Address */}
         <fieldset className="rounded-[1.5rem] border border-forest/10 bg-white/60 p-5 sm:p-6">
           <legend className="sr-only">Delivery address</legend>
           <h2 className="font-poster text-2xl text-forest">2. Delivery address</h2>
@@ -218,7 +212,6 @@ export default function CheckoutForm() {
           </div>
         </fieldset>
 
-        {/* Payment */}
         <fieldset className="rounded-[1.5rem] border border-forest/10 bg-white/60 p-5 sm:p-6">
           <legend className="sr-only">Payment</legend>
           <h2 className="font-poster text-2xl text-forest">3. Payment</h2>
@@ -242,7 +235,6 @@ export default function CheckoutForm() {
         </fieldset>
       </div>
 
-      {/* Summary */}
       <aside className="rounded-[1.75rem] border-2 border-forest bg-cream p-5 shadow-[6px_6px_0_0_var(--color-forest)] sm:p-6 lg:sticky lg:top-24">
         <h2 className="font-poster text-2xl text-forest">Order summary · {countItems(items)}</h2>
         <ul className="mt-3 divide-y divide-forest/10">

@@ -8,15 +8,10 @@ import m1 from "@/public/images/hero/makhana-1.webp";
 import m3 from "@/public/images/hero/makhana-3.webp";
 import m5 from "@/public/images/hero/makhana-5.webp";
 
-/* ── Small building blocks ─────────────────────────────────── */
 
 const cardBg = ["bg-mint-soft", "bg-chilli-soft", "bg-gold-soft/45", "bg-pepper-soft", "bg-white"];
 const tapeBg = ["bg-gold-soft", "bg-mint-soft", "bg-chilli-soft", "bg-gold-soft", "bg-mint-soft"];
 
-/**
- * One chapter = one funky card: thick outline, hard offset shadow, a taped-on chapter label,
- * a giant outlined number, and an optional cut-out image ("sticker") hanging off the corner.
- */
 function Chapter({ index, art, children }: { index: number; art?: React.ReactNode; children: React.ReactNode }) {
   const c = storyChapters[index];
   const n = String(index + 1).padStart(2, "0");
@@ -56,7 +51,6 @@ function Chapter({ index, art, children }: { index: number; art?: React.ReactNod
   );
 }
 
-/** Cut-out photo used as a chapter sticker. */
 function Sticker({ src, small = false }: { src: StaticImageData; small?: boolean }) {
   return (
     <Image
@@ -68,7 +62,6 @@ function Sticker({ src, small = false }: { src: StaticImageData; small?: boolean
   );
 }
 
-/** Big handwritten line — the bits you'd read out loud. */
 function Hand({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return <p className={`font-hand text-2xl font-bold leading-snug text-forest sm:text-[1.75rem] ${className}`}>{children}</p>;
 }
@@ -81,7 +74,6 @@ function Tick() {
   );
 }
 
-/** Hand-drawn curly arrow for annotations. */
 export function Squiggle({ className = "" }: { className?: string }) {
   return (
     <svg viewBox="0 0 80 50" className={className} fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden>
@@ -91,12 +83,10 @@ export function Squiggle({ className = "" }: { className?: string }) {
   );
 }
 
-/* ── The story ─────────────────────────────────────────────── */
 
 export default function Chapters() {
   return (
     <>
-      {/* 01 */}
       <Chapter index={0} art={<Sticker src={spicedBowl} />}>
         <Hand className="text-gold">Let&apos;s be honest.</Hand>
         <Reveal className="space-y-2.5 py-1">
@@ -127,7 +117,6 @@ export default function Chapters() {
         </p>
       </Chapter>
 
-      {/* 02 */}
       <Chapter index={1} art={<Sticker src={m3} small />}>
         <p>We don&apos;t believe snacking needs a lecture.</p>
         <p>
@@ -154,7 +143,6 @@ export default function Chapters() {
         </ul>
       </Chapter>
 
-      {/* 03 */}
       <Chapter index={2} art={<Sticker src={m1} small />}>
         <div className="grid items-center gap-6 sm:grid-cols-[1fr_12rem]">
           <div className="space-y-4">
@@ -175,7 +163,6 @@ export default function Chapters() {
         </Hand>
       </Chapter>
 
-      {/* 04 */}
       <Chapter index={3} art={<MakhanaPouch flavour={flavours.find((f) => f.slug === "salt-pepper")!} sizes="10rem" className="mx-auto w-[70%]" />}>
         <p>Fresh Mewa is about the way we think a snack should be made.</p>
         <ul className="space-y-1.5">
@@ -194,7 +181,6 @@ export default function Chapters() {
         <p className="font-semibold text-forest">A snack brand made around how people actually snack.</p>
       </Chapter>
 
-      {/* 05 */}
       <Chapter index={4} art={<MakhanaPouch flavour={flavours.find((f) => f.slug === "pudina")!} sizes="10rem" className="mx-auto w-[70%]" />}>
         <p>For us, a good snack isn&apos;t only about how it tastes.</p>
         <p>It&apos;s also about what goes into making it.</p>
@@ -211,7 +197,6 @@ export default function Chapters() {
         <p>Just a product we feel good about putting on the shelf and picking up ourselves.</p>
       </Chapter>
 
-      {/* 06 */}
       <Chapter index={5} art={<Sticker src={bowl} />}>
         <p>Because let&apos;s face it, nobody reaches for a snack just because it sounds sensible.</p>
         <p>You reach for it because it looks good.</p>
@@ -243,7 +228,6 @@ export default function Chapters() {
         </div>
       </Chapter>
 
-      {/* 07 */}
       <Chapter index={6} art={<Sticker src={m5} small />}>
         <p>Fresh Mewa isn&apos;t made for one particular kind of person.</p>
         <p>It&apos;s for</p>
@@ -265,7 +249,6 @@ export default function Chapters() {
         </Hand>
       </Chapter>
 
-      {/* 08 */}
       <Chapter index={7}>
         <p>We started with three flavours because not every day calls for the same thing.</p>
         <ul className="space-y-2.5">
@@ -286,7 +269,6 @@ export default function Chapters() {
         <Hand>Different moods. Different cravings. Same Fresh Mewa crunch.</Hand>
       </Chapter>
 
-      {/* 09 */}
       <Chapter index={8} art={<MakhanaPouch flavour={flavours.find((f) => f.slug === "peri-peri")!} sizes="10rem" className="mx-auto w-[70%]" />}>
         <p>Fresh Mewa starts with roasted makhana, but the idea is bigger than one product.</p>
         <p>
@@ -306,7 +288,6 @@ export default function Chapters() {
         </ul>
       </Chapter>
 
-      {/* 10 */}
       <Chapter index={9} art={<Sticker src={m1} small />}>
         <ul className="space-y-1.5 font-hand text-xl font-bold text-forest">
           <li>We don&apos;t want snacking to feel complicated.</li>

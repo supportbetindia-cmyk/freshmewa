@@ -1,3 +1,4 @@
+import JsonLd from "@/components/JsonLd";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -11,7 +12,6 @@ import { faqs, flavours, packs, productDetails, pageMeta, productPath, routes, s
 
 const storage = faqs.find((f) => f.q === "How should I store roasted makhana?")!.a[0];
 
-/** URL "pudina-makhana" → flavour "pudina" (see productPath in lib/content.ts). */
 const byUrl = (urlSlug: string) => flavours.find((f) => productPath(f.slug) === `/shop/${urlSlug}`);
 
 export function generateStaticParams() {
@@ -54,12 +54,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   return (
     <>
       <main>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
-        />
+        <JsonLd data={jsonLd} />
 
-        {/* ── Gallery + buy box ── */}
         <section className="pb-12 pt-24 lg:pb-16 lg:pt-28">
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
             <nav aria-label="Breadcrumb" className="mb-4 flex items-center gap-1.5 text-sm text-ink-muted">
@@ -106,7 +102,6 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           </div>
         </section>
 
-        {/* ── Product details ── */}
         <section className="bg-cream-deep py-14 sm:py-16">
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
             <Reveal>
@@ -149,7 +144,6 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           </div>
         </section>
 
-        {/* ── Other flavours ── */}
         <section className="py-14 sm:py-16">
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
             <Reveal className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
@@ -157,7 +151,6 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               <p className="font-display text-xl italic text-gold">Or make life easier — try all three.</p>
             </Reveal>
           </div>
-          {/* Mobile: swipeable row. Tablet/desktop: two columns. */}
           <div className="mx-auto mt-8 flex max-w-7xl snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-2 [scrollbar-width:none] sm:px-8 md:grid md:grid-cols-2 md:overflow-visible lg:gap-5">
               {flavours
                 .filter((x) => x.slug !== slug)

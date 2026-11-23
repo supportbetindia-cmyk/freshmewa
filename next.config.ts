@@ -1,11 +1,24 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  images: {
-    qualities: [75, 80], // 75 = photos, 80 = the hero (LCP) image
-    formats: ["image/avif", "image/webp"], // AVIF where supported (smaller), WebP otherwise
+  poweredByHeader: false,
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=()" },
+        ],
+      },
+    ];
   },
-  // Old URLs → the SEO-report names (lib/content.ts `routes` / `productPath`). Permanent, so Google moves rankings over.
+  images: {
+    qualities: [75, 80],
+    formats: ["image/avif", "image/webp"],
+  },
   async redirects() {
     return [
       { source: "/shop", destination: "/shop-dry-fruits", permanent: true },

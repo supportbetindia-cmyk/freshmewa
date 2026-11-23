@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth/server";
+import { getUser } from "@/lib/auth/users";
 import { safeNext } from "@/lib/safe-next";
 import LoginForm from "./LoginForm";
 
@@ -11,8 +11,7 @@ export const metadata: Metadata = {
 
 export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   const next = safeNext((await searchParams).next);
-  const { data: session } = await auth.getSession();
-  if (session?.user) redirect(next); // already logged in
+  if (await getUser()) redirect(next);
 
   return (
     <main className="grid min-h-[80vh] place-items-center px-5 pb-16 pt-28">

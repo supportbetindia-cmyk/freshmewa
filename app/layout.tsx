@@ -1,3 +1,4 @@
+import JsonLd from "@/components/JsonLd";
 import type { Metadata } from "next";
 import Script from "next/script";
 import { Comic_Neue, Fraunces, Manrope, Tiro_Devanagari_Hindi } from "next/font/google";
@@ -14,7 +15,7 @@ const fraunces = Fraunces({
   variable: "--font-fraunces",
   subsets: ["latin"],
   style: ["normal", "italic"],
-  preload: false, // ~82 KB; above the fold it's only the small "Made for Every Day." line, so don't let it compete with the hero
+  preload: false,
 });
 
 const manrope = Manrope({
@@ -22,22 +23,20 @@ const manrope = Manrope({
   subsets: ["latin"],
 });
 
-// Handwritten voice for the Our Story page.
 const comicNeue = Comic_Neue({
   variable: "--font-comic",
   subsets: ["latin"],
   weight: ["400", "700"],
-  preload: false, // only the Our Story page + one pill use it
+  preload: false,
 });
 
 const tiro = Tiro_Devanagari_Hindi({
   variable: "--font-tiro",
   subsets: ["devanagari"],
   weight: "400",
-  preload: false, // decorative watermark in the mobile menu only
+  preload: false,
 });
 
-// Subset WOFF2 builds of the Veneer files in /public/fonts (see app/fonts). Veneer = capitals, digits, punctuation, ₹ only.
 const veneer = localFont({
   src: "./fonts/Veneer.woff2",
   variable: "--font-veneer",
@@ -52,7 +51,7 @@ const veneerExtras = localFont({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl), // makes canonical + share URLs absolute (https://www.bestfreshmewa.com/…)
+  metadataBase: new URL(siteUrl),
   title: "Fresh Mewa — Roasted Makhana, Made for Every Day",
   description:
     "Crunchy, flavourful roasted makhana in Pudina, Salt & Pepper and Peri Peri. Made for chai breaks, desk snacking, travel and movie nights.",
@@ -77,7 +76,7 @@ const organizationSchema = {
   "name": "Fresh Mewa",
   "alternateName": "Fresh Mewa",
   "url": "https://www.bestfreshmewa.com/",
-  "logo": "https://www.bestfreshmewa.com/images/logo.webp", // public/ file: fixed URL (the _next/static name changes per build)
+  "logo": "https://www.bestfreshmewa.com/images/logo.webp",
   "contactPoint": {
     "@type": "ContactPoint",
     "telephone": "9999918877",
@@ -96,28 +95,19 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${fraunces.variable} ${manrope.variable} ${tiro.variable} ${veneer.variable} ${veneerExtras.variable} ${comicNeue.variable} antialiased`}
     >
       <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(websiteSchema).replace(/</g, "\\u003c"),
-          }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(organizationSchema).replace(/</g, "\\u003c"),
-          }}
-        />
+        <JsonLd data={websiteSchema} />
+        <JsonLd data={organizationSchema} />
+        <noscript>
+          <style>{"[style*='opacity:0']{opacity:1!important;transform:none!important}"}</style>
+        </noscript>
       </head>
       <body>
-        {/* lazyOnload: GTM + GA (~180 KB, 550 KB of JS) start after the page has loaded, so they don't compete with it. */}
         <Script src="https://www.googletagmanager.com/gtm.js?id=GTM-57ZBCQDP" strategy="lazyOnload" />
         <Script id="freshmewa-analytics" strategy="lazyOnload">
           {`window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());`}
         </Script>
-        {/* LazyMotion + `m` components: only the animation/hover/in-view features ship. `strict` blocks full `motion.*` imports. */}
         <LazyMotion features={domAnimation} strict>
           <MotionConfig reducedMotion="user">
             <SmoothScroll>

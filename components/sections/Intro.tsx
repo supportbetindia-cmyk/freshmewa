@@ -24,9 +24,7 @@ export default function Intro() {
           />
         </Reveal>
 
-        {/* Right column: illustrated hand tossing makhana, overlapping the top of the card */}
         <div
-          // --hand = illustration width; its height is ~0.94× that. Overlap the card by 1.25rem (inside its padding, never over text).
           style={{ "--hand": "clamp(10rem, 30vw, 16rem)" } as React.CSSProperties}
           className="relative pt-[calc(var(--hand)*0.94-1.25rem)]"
         >
