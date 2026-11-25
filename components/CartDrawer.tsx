@@ -36,7 +36,6 @@ export default function CartDrawer() {
             role="dialog"
             aria-modal="true"
             aria-label="Your cart"
-            data-lenis-prevent
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { notFound } from "next/navigation";
 import { listPublishedCategories, listPublishedPosts } from "@/lib/db/posts";
 import PostCard from "../../PostCard";
@@ -22,7 +23,7 @@ export default async function CategoryPage({ params }: PageProps<"/blog/category
 
   return (
     <main className="mx-auto max-w-5xl px-5 pb-16 pt-28 sm:px-8 lg:pt-32">
-      <Link href="/blog" className="text-sm font-semibold text-forest hover:underline">← All posts</Link>
+      <Link href="/blog" className="inline-flex items-center gap-1.5 text-sm font-semibold text-forest hover:underline"><ArrowLeft className="size-4" aria-hidden />All posts</Link>
       <h1 className="mt-3 font-poster text-5xl text-forest sm:text-6xl">{cat.name}</h1>
       <ul className="mt-5 flex flex-wrap gap-2" aria-label="Categories">
         {cats.map((c) => (

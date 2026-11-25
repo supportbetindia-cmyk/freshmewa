@@ -5,6 +5,7 @@ import { AnimatePresence, m } from "framer-motion";
 import { Check, ShoppingBag, Zap } from "lucide-react";
 import { cart } from "@/lib/cart";
 import { packs } from "@/lib/content";
+import { useStock } from "./stock/useStock";
 
 export default function CartButtons({
   slug,
@@ -20,6 +21,8 @@ export default function CartButtons({
   large?: boolean;
 }) {
   const [added, setAdded] = useState(false);
+  const { soldOut } = useStock();
+  const out = soldOut(slug, pack);
 
   useEffect(() => {
     if (!added) return;
@@ -35,6 +38,7 @@ export default function CartButtons({
     <div className="grid grid-cols-2 gap-2">
       <button
         type="button"
+        disabled={out}
         onClick={() => {
           cart.add(slug, pack, qty);
           setAdded(true);
@@ -54,18 +58,19 @@ export default function CartButtons({
             className="flex items-center gap-2"
           >
             {added ? <Check className="size-4" /> : <ShoppingBag className="size-4" strokeWidth={1.8} />}
-            {added ? "Added" : "Add to Cart"}
+            {out ? "Sold out" : added ? "Added" : "Add to Cart"}
           </m.span>
         </AnimatePresence>
       </button>
       <button
         type="button"
+        disabled={out}
         onClick={() => {
           cart.add(slug, pack, qty);
           cart.open();
         }}
         aria-label={`Buy ${name} now`}
-        className={`btn btn-primary ${size}`}
+        className={`btn btn-primary ${size} disabled:opacity-50`}
       >
         <Zap className="size-4 fill-gold-soft text-gold-soft" />
         Buy Now

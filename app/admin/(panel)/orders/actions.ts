@@ -13,8 +13,9 @@ export async function updateStatus(_previous: UpdateStatusState, formData: FormD
     return { error: "Choose a valid order and status, then try again." };
   }
 
-  const updated = await setOrderStatus(id, status);
-  if (!updated) return { error: "This order no longer exists. Return to the orders list." };
+  const result = await setOrderStatus(id, status);
+  if (!result) return { error: "This order no longer exists. Return to the orders list." };
+  if ("short" in result) return { error: "Not enough packs in stock to reopen this order. Add stock first." };
   revalidatePath("/admin/orders", "layout");
   return { success: "Order status updated." };
 }

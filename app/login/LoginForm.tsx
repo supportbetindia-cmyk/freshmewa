@@ -6,7 +6,7 @@ import { emailLogin } from "./actions";
 
 const field = "mt-1.5 h-12 w-full rounded-xl border border-forest/20 bg-white px-4 outline-none focus:border-forest focus:ring-4 focus:ring-gold-soft/50";
 
-export default function LoginForm({ next }: { next: string }) {
+export default function LoginForm({ next, signup = false }: { next: string; signup?: boolean }) {
   const [state, action, pending] = useActionState(emailLogin, null);
   const [googleError, setGoogleError] = useState("");
   const codeStep = state?.step === "code";
@@ -19,8 +19,8 @@ export default function LoginForm({ next }: { next: string }) {
 
   return (
     <div className="w-full max-w-sm rounded-[1.75rem] border border-forest/10 bg-white p-6 sm:p-8">
-      <h1 className="font-poster text-4xl text-forest">Log in</h1>
-      <p className="mt-1 text-ink-muted">See your orders and saved addresses on any device.</p>
+      <h1 className="font-poster text-4xl text-forest">{signup ? "Sign up" : "Log in"}</h1>
+      <p className="mt-1 text-ink-muted">{signup ? "Enter your email and we'll send you a 6-digit code. Your account is created the first time you use it." : "See your orders and saved addresses on any device."}</p>
 
       <button type="button" onClick={google} className="btn btn-outline mt-6 w-full">
         Continue with Google

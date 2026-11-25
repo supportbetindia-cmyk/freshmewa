@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useLenis } from "lenis/react";
 import { ArrowLeft } from "lucide-react";
 import { validateAddress, type AddressForm, type Profile } from "@/lib/orders";
 import { saveAddress } from "@/app/account/actions";
@@ -16,7 +15,6 @@ export default function AddressDialog({ profile, ref }: { profile: Profile | nul
   const [errors, setErrors] = useState<Partial<Record<keyof AddressForm, string>>>({});
   const [saving, setSaving] = useState(false);
   const [serverError, setServerError] = useState("");
-  const lenis = useLenis();
 
   const close = (e: React.SyntheticEvent) => (e.currentTarget.closest("dialog") as HTMLDialogElement).close();
 
@@ -60,11 +58,7 @@ export default function AddressDialog({ profile, ref }: { profile: Profile | nul
     <dialog
       ref={ref}
       aria-labelledby="add-address-title"
-      data-lenis-prevent
-      onClose={() => {
-        setErrors({});
-        lenis?.start();
-      }}
+      onClose={() => setErrors({})}
       className="m-auto w-[min(100%-1.5rem,64rem)] max-h-[calc(100dvh-1.5rem)] overflow-y-auto rounded-[1.75rem] bg-cream p-0 text-ink shadow-[0_40px_80px_-30px_rgba(30,52,24,0.6)] backdrop:bg-forest/45 backdrop:backdrop-blur-[2px]"
     >
       <div className="flex items-center gap-4 border-b border-forest/10 bg-white/70 px-5 py-5 sm:px-8">

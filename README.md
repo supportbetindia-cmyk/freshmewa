@@ -1,7 +1,7 @@
 # Fresh Mewa — Website
 
 Storefront for **Fresh Mewa**, a roasted makhana brand (Pudina, Salt & Pepper, Peri Peri).
-Built with Next.js 16 (App Router), React 19, Tailwind CSS 4, Framer Motion (via `LazyMotion`) and Lenis smooth scrolling.
+Built with Next.js 16 (App Router), React 19, Tailwind CSS 4, Framer Motion (via `LazyMotion`). Smooth scrolling is native CSS (`scroll-behavior`).
 
 ```bash
 npm install
@@ -117,7 +117,6 @@ Every page is a folder in `app/` (folder path = URL). Code that only runs on the
 | `FlavourCard.tsx` | Product card (homepage = CTA, shop = price + cart buttons) |
 | `MakhanaPouch.tsx`, `PouchTrio.tsx` | Pouch image with flavour label; three floating pouches |
 | `Hero.tsx` | Homepage hero |
-| `SmoothScroll.tsx` | Lenis smooth scroll (off for reduced-motion users) |
 | `HideOnAdmin.tsx` | Hides the shop Navbar/Footer on `/admin` pages |
 | `Logo.tsx` | Logo used in the mobile menu |
 | `sections/` | Homepage sections; `Faq`, `FinalCta`, `Marquee`, `Footer` are reused on other pages |
@@ -213,6 +212,13 @@ Flow: product/shop card → **Add to Cart / Buy Now** → cart drawer → **Chec
 - [ ] Online payments (e.g. Razorpay) + order status updates
 - [ ] Set the delivery fee policy
 
+## Stock (`/admin/stock`)
+
+- **Counts** per product and pack (`inventory` table, sku `pudina:60g`). Set them on the Stock page. A product with no count is treated as sold out.
+- **Checkout** takes the packs for the whole order in one go: if any item is short, nothing is saved and the customer sees which product sold out (`lib/db/inventory.ts` → `takeStock`, the decrement only happens when enough is left).
+- **Cancelling** an order (Orders page) returns its packs; reopening it takes them again. `orders.stock_taken` records whether an order currently holds stock, so orders placed before stock tracking don't add packs back when cancelled.
+- **Storefront** reads `/api/stock` (30 s edge cache) to show "Sold out" on buy buttons and pack choices. The server check at checkout is what really protects stock.
+
 ## Security
 
 - **Headers** (`next.config.ts` → `headers`): `X-Frame-Options: SAMEORIGIN` (no embedding the shop in other sites), `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy` (no camera/mic/location/payment APIs). `X-Powered-By` is off. HSTS comes from Vercel.
@@ -298,7 +304,7 @@ From the SEO report ("On Page Recommendation Best Fresh Mewa"):
 - **Type**: Veneer (`font-poster`, headings/buttons, uppercase), Fraunces (`font-display`, italic accents), Manrope (`font-sans`, body), Comic Neue (`font-hand`, Our Story page), Veneer Extras (`font-ornament`, decorative glyphs).
 - **Shared utilities**: `poster-h2` (section heading), `btn` + `btn-primary` / `btn-outline`, `marker` (highlighter-pen underline).
 - **Spacing**: sections use `py-14 sm:py-16 lg:py-20` and `max-w-7xl px-5 sm:px-8` containers — keep it tight.
-- **Motion**: transform/opacity only; shared easing in `lib/motion.ts`; scroll reveals via `ui/Reveal`. Everything respects `prefers-reduced-motion` (Motion's `MotionConfig`, Lenis disabled, CSS animations off).
+- **Motion**: transform/opacity only; shared easing in `lib/motion.ts`; scroll reveals via `ui/Reveal`. Everything respects `prefers-reduced-motion` (Motion's `MotionConfig`, CSS smooth scroll and animations off).
 - **Mobile**: card rows become horizontal swipe sliders; no horizontal page overflow.
 - **Footer** (`components/sections/Footer.tsx`): cream band with the makhana bowl sitting in a curved "smile" top edge (SVG Bézier), loose makhana placed on points along that curve. Rendered once from `app/layout.tsx`.
 

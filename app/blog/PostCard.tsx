@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { formatDate } from "@/lib/content";
 import CoverImage from "./CoverImage";
 
@@ -17,7 +18,7 @@ export default function PostCard({ post: p, sizes }: { post: Card; sizes: string
         </time>
         <h2 className="mt-2 font-display text-2xl leading-snug text-forest">{p.title}</h2>
         {p.excerpt && <p className="mt-2 leading-relaxed text-ink-muted">{p.excerpt}</p>}
-        <span className="mt-auto pt-4 text-sm font-semibold text-forest">Read more →</span>
+        <span className="mt-auto inline-flex items-center gap-1.5 pt-4 text-sm font-semibold text-forest">Read more<ArrowRight className="size-4" aria-hidden /></span>
       </div>
     </Link>
   );

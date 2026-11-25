@@ -2,7 +2,6 @@
 
 import { useRef, useState } from "react";
 import Link from "next/link";
-import { useLenis } from "lenis/react";
 import { Award, ChevronRight, ClipboardList, ListOrdered, LogOut, MapPin, Plus, Trash2 } from "lucide-react";
 import { account, formatAddress, useAccount, type Address } from "@/lib/account";
 import AddressDialog from "./AddressDialog";
@@ -25,9 +24,7 @@ export default function AccountView({ user, orders, addresses }: { user: { name:
   const profile = { name: contact?.name || user.name, phone: contact?.phone ?? "", email: contact?.email || user.email };
   const [tab, setTab] = useState<Tab>("orders");
   const dialog = useRef<HTMLDialogElement>(null);
-  const lenis = useLenis();
   const openAddressForm = () => {
-    lenis?.stop();
     dialog.current?.showModal();
     dialog.current?.querySelector<HTMLInputElement>('[name="name"]')?.focus();
   };

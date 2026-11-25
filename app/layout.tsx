@@ -4,7 +4,6 @@ import Script from "next/script";
 import { Comic_Neue, Fraunces, Manrope, Tiro_Devanagari_Hindi } from "next/font/google";
 import localFont from "next/font/local";
 import { domAnimation, LazyMotion, MotionConfig } from "framer-motion";
-import SmoothScroll from "@/components/SmoothScroll";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/sections/Footer";
 import "./globals.css";
@@ -110,11 +109,9 @@ gtag('js', new Date());`}
         </Script>
         <LazyMotion features={domAnimation} strict>
           <MotionConfig reducedMotion="user">
-            <SmoothScroll>
-              <HideOnAdmin><Navbar /></HideOnAdmin>
-              {children}
-              <HideOnAdmin><Footer /></HideOnAdmin>
-            </SmoothScroll>
+            <HideOnAdmin><Navbar /></HideOnAdmin>
+            {children}
+            <HideOnAdmin><Footer /></HideOnAdmin>
           </MotionConfig>
         </LazyMotion>
       </body>

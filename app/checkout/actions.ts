@@ -2,6 +2,7 @@
 
 import { requireUser } from "@/lib/auth/users";
 import { db } from "@/lib/db";
+import { giveBack, skuOf, takeStock } from "@/lib/db/inventory";
 import { orders } from "@/lib/db/schema";
 import type { CartLine } from "@/lib/cart";
 import { checkoutSettings, flavours, packs } from "@/lib/content";
@@ -48,8 +49,16 @@ export async function placeOrder(form: CheckoutForm, lines: CartLine[]): Promise
     address: { id: crypto.randomUUID(), line: form.line.trim(), city: form.city.trim(), state: form.state, pincode: form.pincode.trim() },
   };
 
+  const stockLines = items.map((i) => ({ sku: skuOf(i.slug, i.pack), qty: i.qty }));
+  const short = await takeStock(stockLines);
+  if (short) {
+    const item = items.find((i) => skuOf(i.slug, i.pack) === short)!;
+    return { ok: false, error: `Sorry, ${item.name} (${item.packLabel}) just sold out. Please update your cart.` };
+  }
+
   try {
     await db.insert(orders).values({
+      stockTaken: true,
       id: order.id,
       userId: user.id,
       name: order.name,
@@ -64,6 +73,7 @@ export async function placeOrder(form: CheckoutForm, lines: CartLine[]): Promise
     });
   } catch (err) {
     console.error("placeOrder failed", err);
+    await giveBack(stockLines);
     return { ok: false, error: "Couldn't place your order. Please try again." };
   }
 

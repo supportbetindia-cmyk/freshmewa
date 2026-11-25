@@ -1,6 +1,7 @@
 import JsonLd from "@/components/JsonLd";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import MakhanaPouch from "@/components/MakhanaPouch";
@@ -92,7 +93,7 @@ export default async function BlogPost({ params }: PageProps<"/blog/[slug]">) {
       </aside>
 
       <div>
-        <Link href="/blog" className="text-sm font-semibold text-forest hover:underline">← All posts</Link>
+        <Link href="/blog" className="inline-flex items-center gap-1.5 text-sm font-semibold text-forest hover:underline"><ArrowLeft className="size-4" aria-hidden />All posts</Link>
         <h1 className="mt-4 font-display text-4xl leading-tight text-forest sm:text-5xl">{post.title}</h1>
         <p className="mt-3 text-ink-muted">
           <time dateTime={post.publishedAt!.toISOString()}>{formatDate(post.publishedAt!)}</time> · {readingMinutes(post.body)} min read

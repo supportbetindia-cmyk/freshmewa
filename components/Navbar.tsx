@@ -1,28 +1,30 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, m, useMotionValueEvent, useScroll } from "framer-motion";
-import { useLenis } from "lenis/react";
-import { Heart, Menu, ShoppingBag, User, X } from "lucide-react";
+import { Menu, ShoppingBag, User, X } from "lucide-react";
 import Logo from "./Logo";
 import logo from "@/public/images/logo.webp";
 import CartDrawer from "./CartDrawer";
+import AuthDialog from "./auth/AuthDialog";
+import { useSessionUser } from "./auth/useSessionUser";
 import { cart, countItems, useCart } from "@/lib/cart";
 import { ease } from "@/lib/motion";
 import { navLinks } from "@/lib/content";
 
 const iconBtn =
   "relative grid size-10 place-items-center rounded-full text-forest transition-colors hover:bg-forest/5 focus-visible:outline-2 focus-visible:outline-gold";
+const pill = "inline-flex h-10 items-center justify-center rounded-full px-3 text-sm font-semibold whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:outline-gold sm:px-4";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [auth, setAuth] = useState<{ open: boolean; signup: boolean; next: string }>({ open: false, signup: false, next: "/" });
   const { scrollY } = useScroll();
-  const lenis = useLenis();
   const pathname = usePathname();
+  const user = useSessionUser();
   const { lines, open: cartOpen } = useCart();
   const cartCount = countItems(lines);
   const locked = open || cartOpen;
@@ -31,7 +33,6 @@ export default function Navbar() {
 
   useEffect(() => {
     if (!locked) return;
-    lenis?.stop();
     document.documentElement.style.overflow = "hidden";
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "Escape") return;
@@ -41,57 +42,72 @@ export default function Navbar() {
     addEventListener("keydown", onKey);
     return () => {
       document.documentElement.style.overflow = "";
-      lenis?.start();
       removeEventListener("keydown", onKey);
     };
-  }, [locked, lenis]);
+  }, [locked]);
+
+  const openAuth = (signup: boolean) => {
+    setOpen(false);
+    setAuth({ open: true, signup, next: window.location.pathname + window.location.search }); // come back to this page after login
+  };
 
   const goTo = (e: React.MouseEvent, href: string) => {
     setOpen(false);
     const [path, hash] = href.split("#");
     if (!hash || path !== pathname) return;
     e.preventDefault();
-    if (lenis) {
-      lenis.start();
-      lenis.scrollTo(`#${hash}`, { offset: -80 });
-    } else {
-      document.getElementById(hash)?.scrollIntoView();
-    }
+    document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" }); // [id] scroll-margin in globals.css keeps it clear of the navbar
   };
+
+  const initial = user ? (user.name || user.email).trim().charAt(0).toUpperCase() : "";
 
   return (
     <>
       <header
         style={{ "--enter-y": "-24px", animationDuration: "0.9s", animationDelay: "0.2s" } as React.CSSProperties}
-        className="enter-fade-up fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-5 sm:pt-4"
+        className="enter-fade-up fixed inset-x-0 top-0 z-50"
       >
         <nav
           aria-label="Main"
-          className={`mx-auto grid max-w-7xl grid-cols-[1fr_auto_1fr] items-center rounded-full px-3 transition-[background-color,box-shadow,border-color] duration-500 ease-premium sm:px-5 ${
-            scrolled
-              ? "border border-white/60 bg-cream/90 shadow-[0_8px_30px_-12px_rgba(30,52,24,0.18)] backdrop-blur-sm"
-              : "border border-transparent"
+          className={`relative flex h-16 items-center justify-between gap-3 border-b bg-cream/95 px-4 backdrop-blur-md transition-[box-shadow,border-color] duration-500 sm:h-20 sm:px-8 ${
+            scrolled ? "border-forest/15 shadow-[0_10px_30px_-18px_rgba(30,52,24,0.35)]" : "border-transparent"
           }`}
         >
-          <button
-            type="button"
-            aria-label="Open menu"
-            aria-expanded={open}
-            aria-controls="mobile-nav"
-            onClick={() => setOpen(true)}
-            className={`${iconBtn}`}
-          >
-            <Menu className="size-5" strokeWidth={1.6} />
-          </button>
-
-          <Link href="/" aria-label="Fresh Mewa home">
-            <img src={logo.src} alt="Fresh Mewa" loading="eager" className="h-auto w-24" />
+          <Link href="/" aria-label="Fresh Mewa home" className="shrink-0">
+            <img src={logo.src} alt="Fresh Mewa" loading="eager" className="h-12 w-auto sm:h-16" />
           </Link>
 
-          <div className="flex items-center gap-0.5 justify-self-end">
-            <Link href="/account" rel="nofollow" prefetch={false} aria-label="My account" className={iconBtn}>
-              <User className="size-[1.15rem]" strokeWidth={1.6} />
-            </Link>
+          <ul className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-1 lg:flex">
+            {navLinks.map((l) => (
+              <li key={l.href}>
+                <Link href={l.href} onClick={(e) => goTo(e, l.href)} className="rounded-full px-3 py-2 text-sm font-semibold text-forest hover:bg-forest/5">
+                  {l.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          <div className="flex items-center gap-1 sm:gap-2">
+            <button type="button" aria-label="Open menu" aria-expanded={open} aria-controls="mobile-nav" onClick={() => setOpen(true)} className={`${iconBtn} lg:hidden`}>
+              <Menu className="size-5" strokeWidth={1.6} />
+            </button>
+            {user === undefined && <span aria-hidden className="h-10 w-24" />}
+            {user === null && (
+              <>
+                <button type="button" onClick={() => openAuth(false)} className={`${pill} border border-forest/25 text-forest hover:border-forest`}>
+                  Log in
+                </button>
+                <button type="button" onClick={() => openAuth(true)} className={`${pill} bg-forest text-cream hover:bg-forest-soft max-sm:hidden`}>
+                  Sign up
+                </button>
+              </>
+            )}
+            {user && (
+              <Link href="/account" rel="nofollow" prefetch={false} aria-label="My account" title={user.email}
+                className="grid size-10 place-items-center rounded-full bg-forest text-sm font-bold text-cream hover:bg-forest-soft focus-visible:outline-2 focus-visible:outline-gold">
+                {initial || <User className="size-4" strokeWidth={1.8} />}
+              </Link>
+            )}
             <button type="button" onClick={cart.open} aria-label={`Open cart, ${cartCount} items`} className={iconBtn}>
               <ShoppingBag className="size-[1.15rem]" strokeWidth={1.6} />
               <AnimatePresence initial={false} mode="popLayout">
@@ -101,7 +117,7 @@ export default function Navbar() {
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0.4, opacity: 0 }}
                   transition={{ type: "spring", stiffness: 500, damping: 28 }}
-                  className="absolute right-0.5 top-0.5 grid size-[1.1rem] place-items-center rounded-full bg-forest text-[0.62rem] font-semibold text-cream"
+                  className="absolute right-0.5 top-0.5 grid size-[1.1rem] place-items-center rounded-full bg-gold text-[0.62rem] font-semibold text-cream"
                 >
                   {cartCount}
                 </m.span>
@@ -133,18 +149,11 @@ export default function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ duration: 0.6, ease }}
-              data-lenis-prevent
               className="grain fixed inset-y-0 left-0 z-[70] flex w-[min(86vw,380px)] flex-col overflow-hidden bg-cream px-6 pb-8 pt-6"
             >
               <div className="flex items-center justify-between">
                 <Logo />
-                <button
-                  type="button"
-                  aria-label="Close menu"
-                  onClick={() => setOpen(false)}
-                  className={iconBtn}
-                  autoFocus
-                >
+                <button type="button" aria-label="Close menu" onClick={() => setOpen(false)} className={iconBtn} autoFocus>
                   <X className="size-5" strokeWidth={1.6} />
                 </button>
               </div>
@@ -157,11 +166,7 @@ export default function Navbar() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.6, ease, delay: 0.15 + i * 0.06 }}
                   >
-                    <Link
-                      href={l.href}
-                      onClick={(e) => goTo(e, l.href)}
-                      className="flex items-baseline justify-between border-b border-forest/10 py-4 font-display text-3xl text-forest"
-                    >
+                    <Link href={l.href} onClick={(e) => goTo(e, l.href)} className="flex items-baseline justify-between border-b border-forest/10 py-4 font-display text-3xl text-forest">
                       {l.label}
                       <span className="font-sans text-xs text-ink-muted">0{i + 1}</span>
                     </Link>
@@ -169,24 +174,27 @@ export default function Navbar() {
                 ))}
               </ul>
 
-              <div className="mt-auto flex gap-3 text-sm font-medium text-forest">
-                <Link href="/account" rel="nofollow" prefetch={false} onClick={() => setOpen(false)} className="flex flex-1 items-center justify-center gap-2 rounded-full border border-forest/15 py-3">
-                  <User className="size-4" strokeWidth={1.6} /> Account
-                </Link>
-                <Link href="/wishlist" onClick={() => setOpen(false)} className="flex flex-1 items-center justify-center gap-2 rounded-full border border-forest/15 py-3">
-                  <Heart className="size-4" strokeWidth={1.6} /> Wishlist
-                </Link>
+              <div className="mt-auto flex gap-3 text-sm font-semibold text-forest">
+                {user ? (
+                  <Link href="/account" rel="nofollow" prefetch={false} onClick={() => setOpen(false)} className="flex flex-1 items-center justify-center gap-2 rounded-full bg-forest py-3 text-cream">
+                    <User className="size-4" strokeWidth={1.6} /> My account
+                  </Link>
+                ) : (
+                  <>
+                    <button type="button" onClick={() => openAuth(false)} className="flex-1 rounded-full border border-forest/25 py-3">Log in</button>
+                    <button type="button" onClick={() => openAuth(true)} className="flex-1 rounded-full bg-forest py-3 text-cream">Sign up</button>
+                  </>
+                )}
               </div>
-              <span
-                aria-hidden
-                className="pointer-events-none absolute -bottom-10 -right-6 font-deva text-[11rem] leading-none text-gold/10"
-              >
+              <span aria-hidden className="pointer-events-none absolute -bottom-10 -right-6 font-deva text-[11rem] leading-none text-gold/10">
                 मेवा
               </span>
             </m.div>
           </>
         )}
       </AnimatePresence>
+
+      <AuthDialog open={auth.open} next={auth.next} signup={auth.signup} onClose={() => setAuth((a) => ({ ...a, open: false }))} />
       <CartDrawer />
     </>
   );

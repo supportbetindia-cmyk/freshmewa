@@ -13,6 +13,7 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
             <Link href="/admin/orders" className="font-poster text-2xl">Fresh Mewa Admin</Link>
             <Link href="/admin/orders" className="text-sm text-cream/80 hover:text-cream">Orders</Link>
             <Link href="/admin/blog" className="text-sm text-cream/80 hover:text-cream">Blog</Link>
+            <Link href="/admin/stock" className="text-sm text-cream/80 hover:text-cream">Stock</Link>
           </nav>
           <div className="flex items-center gap-4 text-sm">
             <span className="text-cream/70 max-sm:hidden">{admin.email}</span>

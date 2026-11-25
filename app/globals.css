@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "lenis/dist/lenis.css";
 
 @theme {
   --color-cream: #faf7f2;
@@ -9,7 +8,7 @@
   --color-forest-soft: #3c542a;
   --color-pista: #496525;
   --color-pista-soft: #d5ddc2;
-  --color-gold: #946b24;
+  --color-gold: #86601f; /* deepened from #946b24: small gold text now passes 4.5:1 on cream */
   --color-gold-soft: #dfbe76;
   --color-ink: #20331d;
   --color-ink-muted: #5d6856;
@@ -33,6 +32,7 @@
 }
 
 html {
+  scroll-behavior: smooth; /* anchor links glide (replaces Lenis); off for reduced-motion below */
   background: var(--color-cream);
   color: var(--color-ink);
 }
@@ -162,3 +162,9 @@ body {
 .blog-content hr { border: 0; border-top: 2px dashed color-mix(in oklab, var(--color-forest) 25%, transparent); margin: 2em 0; }
 .blog-content table, .blog-content img { max-width: 100%; }
 @media (max-width: 640px) { .blog-content table { display: block; overflow-x: auto; } }
+
+/* Sections jumped to by #links stop below the fixed navbar (replaces Lenis's anchor offset). */
+[id] { scroll-margin-top: 5rem; }
+/* Keep the page still while the address dialog is open (replaces Lenis stop). */
+html:has(dialog[open]) { overflow: hidden; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }

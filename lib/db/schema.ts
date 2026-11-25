@@ -1,4 +1,4 @@
-import { index, integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { boolean, index, integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { orderStatuses, type Address, type OrderItem } from "../orders";
 
 
@@ -18,6 +18,7 @@ export const orders = pgTable("orders", {
   total: integer().notNull(),
   payment: text({ enum: ["cod"] }).notNull().default("cod"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  stockTaken: boolean("stock_taken").notNull().default(false), // true while this order holds stock (false for orders placed before stock tracking, and after cancel)
 }, (t) => [
   index("orders_user_id_idx").on(t.userId), 
 ]);
@@ -57,4 +58,11 @@ export const blogImages = pgTable("blog_images", {
   mime: text().notNull(),
   data: text().notNull(), // base64
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+/** Packs in stock per product + pack size. sku = "pudina:60g" (see skuOf in lib/db/inventory.ts). */
+export const inventory = pgTable("inventory", {
+  sku: text().primaryKey(),
+  quantity: integer().notNull().default(0),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Minus, Package, Plus, Sprout, Truck } from "lucide-react";
 import { checkoutSettings, type Flavour, formatINR, packs, productDetails, routes, tones } from "@/lib/content";
 import CartButtons from "../CartButtons";
+import { useStock } from "../stock/useStock";
 
 export default function BuyBox({ flavour: f }: { flavour: Flavour }) {
   const [packId, setPackId] = useState(packs[0].id);
@@ -12,6 +13,7 @@ export default function BuyBox({ flavour: f }: { flavour: Flavour }) {
   const pack = packs.find((p) => p.id === packId) ?? packs[0];
   const off = Math.round((1 - pack.price / pack.mrp) * 100);
   const t = tones[f.tone];
+  const { soldOut } = useStock();
 
   return (
     <div className="rounded-[1.75rem] border border-forest/10 bg-white/60 p-5 sm:p-6">
@@ -41,11 +43,14 @@ export default function BuyBox({ flavour: f }: { flavour: Flavour }) {
                 name="pack"
                 value={p.id}
                 checked={p.id === packId}
+                disabled={soldOut(f.slug, p.id)}
                 onChange={() => setPackId(p.id)}
                 className="sr-only"
               />
               <span className="block font-poster text-xl leading-none">{p.label}</span>
-              <span className="mt-1 block text-xs font-semibold opacity-80">{formatINR(p.price)}</span>
+              <span className="mt-1 block text-xs font-semibold opacity-80">
+                {soldOut(f.slug, p.id) ? "Sold out" : formatINR(p.price)}
+              </span>
             </label>
           ))}
         </div>
